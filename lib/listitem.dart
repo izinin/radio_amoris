@@ -1,14 +1,15 @@
-import 'dart:_http';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:radio_amoris/audioctl.dart';
 import 'dart:convert';
 
 class Station extends StatefulWidget{
   final String _descr;
   final String _baseUrl;
+  final AudioCtl _playerCtl;
 
-  Station(this._descr, this._baseUrl);
+  Station(this._playerCtl, this._descr, this._baseUrl);
 
   @override
   State<StatefulWidget> createState() {
@@ -23,10 +24,10 @@ class StationState extends State<Station>{
   Future<ChanInfo> _fetchChanInfo() async {
     final response = await _client.get(widget._baseUrl + '/stats.json',
       headers: {
-        HttpHeaders.USER_AGENT: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36'
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36'
       }
     );
-    if (response.statusCode == HttpStatus.OK) {
+    if (response.statusCode == 200) {
       return ChanInfo.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load channel info');
@@ -54,6 +55,8 @@ class StationState extends State<Station>{
       isThreeLine: true,
       onTap: (){
         setState(() { this._selected = !this._selected; });
+        (PlayerState.paused == widget._playerCtl.playerState) ? 
+            widget._playerCtl.resume : widget._playerCtl.pause;
         },
       selected: this._selected
     );
