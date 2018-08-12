@@ -30,11 +30,19 @@ public class AudioplayerPlugin implements MethodCallHandler {
   public void onMethodCall(MethodCall call, MethodChannel.Result response) {
     switch (call.method) {
       case "create":
-        create(call.argument("url").toString());
+        create();
+        response.success(null);
+        break;
+      case "setmedia":
+        player.setMedia(call.argument("url").toString());
         response.success(null);
         break;
       case "pause":
         player.pause();
+        response.success(null);
+        break;
+      case "stop":
+        player.stop();
         response.success(null);
         break;
       case "resume":
@@ -50,9 +58,9 @@ public class AudioplayerPlugin implements MethodCallHandler {
     }
   }
 
-  private void create(String url) {
+  private void create() {
     try {
-      player.createPlayer(url, channel);
+      player.createPlayer(channel);
       player.isReadyInit = true;
     } catch (Exception e) {
       channel.invokeMethod("audio.onError", e.getMessage());

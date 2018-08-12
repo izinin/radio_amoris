@@ -43,7 +43,6 @@ class StationState extends State<Station>{
         future: _fetchChanInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            print(snapshot.data);
             return Text('${snapshot.data.songtitle} \nlisteners: ${snapshot.data.uniquelisteners}');
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
@@ -54,9 +53,13 @@ class StationState extends State<Station>{
       ),
       isThreeLine: true,
       onTap: (){
-        setState(() { this._selected = !this._selected; });
-        (PlayerState.paused == widget._playerCtl.playerState) ? 
-            widget._playerCtl.resume : widget._playerCtl.pause;
+          setState(() { this._selected = !this._selected; });
+          if (PlayerState.paused == widget._playerCtl.playerState) {
+            widget._playerCtl.setmedia(widget._baseUrl);
+            widget._playerCtl.resume();
+          }else{
+            widget._playerCtl.pause();
+          }
         },
       selected: this._selected
     );

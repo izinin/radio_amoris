@@ -3,22 +3,24 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-enum PlayerState { created, destroyed, playing, paused }
+enum PlayerState { created, playing, paused }
 
 class AudioCtl {
   final MethodChannel channel = new MethodChannel('com.zindolla.flutter/audio');
 
   VoidCallback nativeMsgHandler;
-  PlayerState playerState = PlayerState.destroyed;
+  PlayerState playerState = PlayerState.paused;
 
-  Completer create(String url){
-    channel.invokeMethod('create', {'url': url});
+  Completer create(){
+    channel.invokeMethod('create');
     return new Completer();
   }
 
+  Future setmedia(String url) => channel.invokeMethod('setmedia', {'url': url});
   Future destroy() => channel.invokeMethod('destroy');
   Future pause() => channel.invokeMethod('pause');
   Future resume() => channel.invokeMethod('resume');
+  Future stop() => channel.invokeMethod('stop');
 
   Map<String, VoidCallback> callbacks = {
     'audio.onCreate': null,

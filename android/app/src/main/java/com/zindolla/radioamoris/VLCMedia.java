@@ -26,7 +26,7 @@ public class VLCMedia {
     private MethodChannel channel;
     public Boolean isReadyInit = false;
 
-    public void createPlayer(String media, MethodChannel channel) throws Exception {
+    public void createPlayer(MethodChannel channel) throws Exception {
         this.channel = channel;
         isReadyInit = false;
         releasePlayer();
@@ -45,14 +45,19 @@ public class VLCMedia {
         // Create media player
         mMediaPlayer = new MediaPlayer(libvlc);
         mMediaPlayer.setEventListener(mPlayerListener);
-
-        Media m = new Media(libvlc, Uri.parse(media));
-        mMediaPlayer.setMedia(m);
-        mMediaPlayer.play();
     }
 
     public void pause(){
         mMediaPlayer.pause();
+    }
+
+    public void setMedia(String media){
+        Media m = new Media(libvlc, Uri.parse(media));
+        mMediaPlayer.setMedia(m);
+    }
+
+    public void stop(){
+        mMediaPlayer.stop();
     }
 
     public void resume(){
