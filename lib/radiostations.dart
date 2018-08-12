@@ -22,7 +22,7 @@ class StationlistState  extends State<RadioStations>{
     _widgetArr = new List<Widget>(keys.length * 2);
     for(var i=0; i < _widgetArr.length; i += 2){
       var item = StationsData[keys.elementAt(i ~/ 2)];
-      _widgetArr[i] = new Station(item['descr'], 'implementme');
+      _widgetArr[i] = new Station(item['descr'], item['url']);
       _widgetArr[i+1] = new Divider();
     }
   }
