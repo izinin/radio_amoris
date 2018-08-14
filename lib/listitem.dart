@@ -4,12 +4,17 @@ import 'package:http/http.dart' as http;
 import 'package:radio_amoris/audioctl.dart';
 import 'dart:convert';
 
+import 'package:radio_amoris/radiostations.dart';
+
 class Station extends StatefulWidget{
   final String _descr;
   final String _baseUrl;
   final AudioCtl _playerCtl;
+  final int _uid;
+  final ValueChanged<int> itemSelectedCallback;
 
-  Station(this._playerCtl, this._descr, this._baseUrl);
+  Station(this._playerCtl, this._uid, this._descr, this._baseUrl,
+  { @required this.itemSelectedCallback });
 
   @override
   State<StatefulWidget> createState() {
@@ -36,8 +41,12 @@ class StationState extends State<Station>{
 
   @override
   Widget build(BuildContext context) {
+    final sharedSel = SharedSelection.of(context);
+    print(sharedSel.uid);
     return ListTile(
-      leading: Icon(Icons.map),
+      leading: Icon((!_selected) ? Icons.play_circle_outline : 
+        (PlayerState.paused == widget._playerCtl.playerState) ? 
+          Icons.pause_circle_outline : Icons.play_circle_outline),
       title: Text(widget._descr),
       subtitle: FutureBuilder<ChanInfo>(
         future: _fetchChanInfo(),
@@ -53,15 +62,18 @@ class StationState extends State<Station>{
       ),
       isThreeLine: true,
       onTap: (){
-          setState(() { this._selected = !this._selected; });
-          if (PlayerState.paused == widget._playerCtl.playerState) {
-            widget._playerCtl.setmedia(widget._baseUrl);
-            widget._playerCtl.resume();
-          }else{
-            widget._playerCtl.pause();
-          }
+          setState(() { 
+            _selected = !_selected; 
+            });
+          widget.itemSelectedCallback(widget._uid);
+        //  if (PlayerState.paused == widget._playerCtl.playerState) {
+        //    widget._playerCtl.setmedia(widget._baseUrl);
+        //    widget._playerCtl.resume();
+        //  }else{
+        //    widget._playerCtl.pause();
+        //  }
         },
-      selected: this._selected
+      selected: _selected
     );
   }
 }

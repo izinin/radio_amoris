@@ -1,9 +1,26 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:radio_amoris/audioctl.dart';
 import 'package:radio_amoris/listitem.dart';
 import 'package:radio_amoris/stationsdata.dart';
+
+// https://flutterbyexample.com/set-up-inherited-widget-app-state/
+class SharedSelection extends InheritedWidget {
+  // The data is whatever this widget is passing down.
+  final int uid;
+
+  SharedSelection({
+    Key key,
+    @required this.uid,
+    @required Widget child,
+  }) : super(key: key, child: child);
+
+  static SharedSelection of(BuildContext context) {
+    return context.inheritFromWidgetOfExactType(SharedSelection);
+  }
+
+  @override
+  bool updateShouldNotify(SharedSelection old) => uid != old.uid;
+}
 
 class RadioStations extends StatefulWidget {
 
@@ -18,6 +35,7 @@ class RadioStations extends StatefulWidget {
 class StationlistState  extends State<RadioStations>{
   List<Widget> _widgetArr;
   AudioCtl _playerCtl;
+  int _selected = -1;
 
   @override
   void initState() {
@@ -42,9 +60,12 @@ class StationlistState  extends State<RadioStations>{
         appBar: AppBar(
           title: Text(title),
         ),
-        body: ListView(
-          children: _widgetArr,
-        ),
+        body: SharedSelection(
+          child: ListView(
+                children: _widgetArr,
+              ),
+          uid: _selected,
+          )
       ),
     );
   }
@@ -53,8 +74,14 @@ class StationlistState  extends State<RadioStations>{
     var keys = StationsData.keys;
     _widgetArr = new List<Widget>(keys.length * 2);
     for(var i=0; i < _widgetArr.length; i += 2){
-      var item = StationsData[keys.elementAt(i ~/ 2)];
-      _widgetArr[i] = new Station(player, item['descr'], item['url']);
+      int uid = keys.elementAt(i ~/ 2);
+      var item = StationsData[uid];
+      _widgetArr[i] = new Station(player, uid, item['descr'], item['url'],
+      itemSelectedCallback: (uid){
+        setState(() {
+            _selected = uid;
+          });
+      });
       _widgetArr[i+1] = new Divider();
     }
   }
@@ -70,9 +97,7 @@ class StationlistState  extends State<RadioStations>{
   }
 
   _onCreated(){
-    setState(() {
-      _playerCtl.playerState = PlayerState.created;
-    });
+    _playerCtl.playerState = PlayerState.created;
   }
 
   _onError(){
@@ -80,14 +105,10 @@ class StationlistState  extends State<RadioStations>{
   }
 
   _onPaused(){
-    setState(() {
-      _playerCtl.playerState = PlayerState.paused;
-    });
+    _playerCtl.playerState = PlayerState.paused;
   }
 
   _onResumed(){
-    setState(() {
-      _playerCtl.playerState = PlayerState.playing;
-    });
+    _playerCtl.playerState = PlayerState.playing;
   }
 }
