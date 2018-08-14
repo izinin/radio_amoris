@@ -72,11 +72,17 @@ class StationState extends State<Station>{
             _selected = !_selected; 
             });
           widget.itemSelectedCallback(widget._uid);
-          if (PlayerState.paused == widget._playerCtl.playerState) {
-            widget._playerCtl.setmedia(widget._baseUrl);
-            widget._playerCtl.resume();
+          if(_isSelected(sharedSel.uid)){
+            if (PlayerState.paused == widget._playerCtl.playerState) {
+              widget._playerCtl.setmedia(widget._baseUrl);
+              widget._playerCtl.resume();
+            }else{
+              widget._playerCtl.pause();
+            }
           }else{
             widget._playerCtl.pause();
+            widget._playerCtl.setmedia(widget._baseUrl);
+            widget._playerCtl.resume();
           }
         },
       selected: _isSelected(sharedSel.uid)
