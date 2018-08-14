@@ -1,6 +1,6 @@
 # radio_amoris
 
-A new Flutter project.
+A Flutter project. Internet radio for all
 
 ## Getting Started
 
