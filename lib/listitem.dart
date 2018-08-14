@@ -44,9 +44,10 @@ class StationState extends State<Station>{
     final sharedSel = SharedSelection.of(context);
     print(sharedSel.uid);
     return ListTile(
-      leading: Icon((!_selected) ? Icons.play_circle_outline : 
+      leading: Icon((_isSelected(sharedSel.uid)) ? 
         (PlayerState.paused == widget._playerCtl.playerState) ? 
-          Icons.pause_circle_outline : Icons.play_circle_outline),
+          Icons.pause_circle_outline : Icons.play_circle_outline :
+            Icons.play_circle_outline),
       title: Text(widget._descr),
       subtitle: FutureBuilder<ChanInfo>(
         future: _fetchChanInfo(),
@@ -66,15 +67,19 @@ class StationState extends State<Station>{
             _selected = !_selected; 
             });
           widget.itemSelectedCallback(widget._uid);
-        //  if (PlayerState.paused == widget._playerCtl.playerState) {
-        //    widget._playerCtl.setmedia(widget._baseUrl);
-        //    widget._playerCtl.resume();
-        //  }else{
-        //    widget._playerCtl.pause();
-        //  }
+          if (PlayerState.paused == widget._playerCtl.playerState) {
+            widget._playerCtl.setmedia(widget._baseUrl);
+            widget._playerCtl.resume();
+          }else{
+            widget._playerCtl.pause();
+          }
         },
-      selected: _selected
+      selected: _isSelected(sharedSel.uid)
     );
+  }
+
+  bool _isSelected(int uid){
+    return (uid == -1 || uid == widget._uid) && _selected;
   }
 }
 
