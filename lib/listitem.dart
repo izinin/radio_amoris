@@ -25,6 +25,8 @@ class Station extends StatefulWidget{
 class StationState extends State<Station>{
   bool _selected = false;
   var _client = new http.Client();
+  bool _allowhttp = true;
+  String _lastsongtitle = '...';
 
   Future<ChanInfo> _fetchChanInfo() async {
     final response = await _client.get(widget._baseUrl + '/stats.json',
@@ -32,13 +34,15 @@ class StationState extends State<Station>{
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36'
       }
     );
+    _allowhttp = false;
     if (response.statusCode == 200) {
+      new Timer(const Duration(seconds: 30), ()=> _allowhttp = true);
       return ChanInfo.fromJson(json.decode(response.body));
     } else {
       throw Exception('Failed to load channel info');
     }
   }
-
+   
   @override
   Widget build(BuildContext context) {
     final sharedSel = SharedSelection.of(context);
@@ -49,18 +53,19 @@ class StationState extends State<Station>{
           Icons.pause_circle_outline : Icons.play_circle_outline :
             Icons.play_circle_outline),
       title: Text(widget._descr),
-      subtitle: FutureBuilder<ChanInfo>(
+      subtitle: _allowhttp ? FutureBuilder<ChanInfo>(
         future: _fetchChanInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Text('${snapshot.data.songtitle} \nlisteners: ${snapshot.data.uniquelisteners}');
+            _lastsongtitle = '${snapshot.data.songtitle} \nlisteners: ${snapshot.data.uniquelisteners}';
+            return Text(_lastsongtitle);
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
           // By default, show a loading spinner
           return Text('...');
         },
-      ),
+      ) : Text(_lastsongtitle),
       isThreeLine: true,
       onTap: (){
           setState(() { 
