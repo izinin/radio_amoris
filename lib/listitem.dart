@@ -12,9 +12,11 @@ class Station extends StatefulWidget{
   final AudioCtl _playerCtl;
   final int _uid;
   final ValueChanged<int> itemSelectedCallback;
+  final ValueChanged<String> itemUrlCallback;
 
-  Station(this._playerCtl, this._uid, this._descr, this._baseUrl,
-  { @required this.itemSelectedCallback });
+  Station(this._playerCtl, this._uid, this._descr, this._baseUrl, {
+      @required this.itemSelectedCallback,
+      @required this.itemUrlCallback });
 
   @override
   State<StatefulWidget> createState() {
@@ -42,16 +44,12 @@ class StationState extends State<Station>{
       throw Exception('Failed to load channel info');
     }
   }
-   
+    
   @override
   Widget build(BuildContext context) {
     final sharedSel = SharedSelection.of(context);
-    print(sharedSel.uid);
     return ListTile(
-      leading: Icon((_isSelected(sharedSel.uid)) ? 
-        (PlayerState.paused == widget._playerCtl.playerState) ? 
-          Icons.pause_circle_outline : Icons.play_circle_outline :
-            Icons.play_circle_outline),
+      leading: _getIgon(sharedSel),
       title: Text(widget._descr),
       subtitle: _allowhttp ? FutureBuilder<ChanInfo>(
         future: _fetchChanInfo(),
@@ -68,29 +66,50 @@ class StationState extends State<Station>{
       ) : Text(_lastsongtitle),
       isThreeLine: true,
       onTap: (){
-          setState(() { 
-            _selected = !_selected; 
-            });
-          widget.itemSelectedCallback(widget._uid);
-          if(_isSelected(sharedSel.uid)){
-            if (PlayerState.paused == widget._playerCtl.playerState) {
-              widget._playerCtl.setmedia(widget._baseUrl);
-              widget._playerCtl.resume();
-            }else{
-              widget._playerCtl.pause();
-            }
-          }else{
-            widget._playerCtl.pause();
+        widget.itemSelectedCallback(widget._uid);
+        setState(() { 
+          _selected = (sharedSel.uid == widget._uid);
+        });
+        if(_isSelected(sharedSel.uid)){
+          if (PlayerState.paused == sharedSel.playerstate) {
+            widget._playerCtl.playerState = PlayerState.inprogress;
             widget._playerCtl.setmedia(widget._baseUrl);
             widget._playerCtl.resume();
+          } else {
+            widget.itemUrlCallback(widget._baseUrl);
+            widget._playerCtl.pause();
           }
-        },
+        }else if (PlayerState.playing == sharedSel.playerstate){
+          widget._playerCtl.playerState = PlayerState.pauseresume;
+          widget._playerCtl.pause();
+        }
+      },
       selected: _isSelected(sharedSel.uid)
     );
   }
 
   bool _isSelected(int uid){
     return (uid == -1 || uid == widget._uid) && _selected;
+  }
+
+  _getIgon(SharedSelection sharedSel) {
+    var icondata = Icons.play_circle_outline;
+    if(_isSelected(sharedSel.uid)) {
+      switch(sharedSel.playerstate){
+        case PlayerState.created:
+        case PlayerState.paused:
+          icondata = Icons.pause_circle_outline;
+          break;
+        case PlayerState.playing:
+          icondata = Icons.play_circle_outline;
+          break;
+        case PlayerState.inprogress:
+        case PlayerState.pauseresume:
+          icondata = Icons.loop;
+          break;
+      }
+    }
+    return new Icon(icondata);
   }
 }
 

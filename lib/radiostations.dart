@@ -7,10 +7,12 @@ import 'package:radio_amoris/stationsdata.dart';
 class SharedSelection extends InheritedWidget {
   // The data is whatever this widget is passing down.
   final int uid;
+  final PlayerState playerstate;
 
   SharedSelection({
     Key key,
     @required this.uid,
+    @required this.playerstate,
     @required Widget child,
   }) : super(key: key, child: child);
 
@@ -19,7 +21,7 @@ class SharedSelection extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(SharedSelection old) => uid != old.uid;
+  bool updateShouldNotify(SharedSelection old) => (uid != old.uid || playerstate != old.playerstate);
 }
 
 class RadioStations extends StatefulWidget {
@@ -36,6 +38,7 @@ class StationlistState  extends State<RadioStations>{
   List<Widget> _widgetArr;
   AudioCtl _playerCtl;
   int _selected = -1;
+  String _newUrl;
 
   @override
   void initState() {
@@ -64,6 +67,7 @@ class StationlistState  extends State<RadioStations>{
           child: ListView(
                 children: _widgetArr,
               ),
+          playerstate: _playerCtl.playerState,
           uid: _selected,
           )
       ),
@@ -81,6 +85,9 @@ class StationlistState  extends State<RadioStations>{
         setState(() {
             _selected = uid;
           });
+      },
+      itemUrlCallback: (url){
+        _newUrl = url;
       });
       _widgetArr[i+1] = new Divider();
     }
@@ -97,18 +104,33 @@ class StationlistState  extends State<RadioStations>{
   }
 
   _onCreated(){
-    _playerCtl.playerState = PlayerState.created;
+    setState(() {
+      _playerCtl.playerState = PlayerState.created;
+    });
   }
 
   _onError(){
     print("error received");
+    setState(() {
+      _playerCtl.playerState = PlayerState.paused;
+    });
   }
 
   _onPaused(){
-    _playerCtl.playerState = PlayerState.paused;
+    PlayerState state;
+    if (_playerCtl.playerState == PlayerState.pauseresume) {
+      _playerCtl.setmedia(_newUrl);
+      _playerCtl.resume();
+    } else {
+      setState(() {
+        _playerCtl.playerState = PlayerState.paused;
+      });
+    }
   }
 
   _onResumed(){
-    _playerCtl.playerState = PlayerState.playing;
+    setState(() {
+      _playerCtl.playerState = PlayerState.playing;
+    });
   }
 }

@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-enum PlayerState { created, playing, paused }
+enum PlayerState { created, playing, paused, inprogress, pauseresume }
 
 class AudioCtl {
   final MethodChannel channel = new MethodChannel('com.zindolla.flutter/audio');
@@ -35,7 +35,7 @@ class AudioCtl {
   }
 
   Future platformCallHandler(MethodCall call) async {
-    print('_platformCallHandler call ${call.method} ${call.arguments}');
+    // print('_platformCallHandler call ${call.method} ${call.arguments}');
     if(callbacks.containsKey(call.method)){
       if(callbacks[call.method]!=null){
         callbacks[call.method]();
