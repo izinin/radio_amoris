@@ -19,9 +19,8 @@ import java.util.List;
 
 import android.support.v4.app.NotificationCompat;
 
-import static com.zindolla.radioamoris.MainActivity.TOSERVICE_AUDIO_URL;
-import static com.zindolla.radioamoris.MainActivity.TOSERVICE_FAVOURITES;
-import static com.zindolla.radioamoris.MainActivity.TOSERVICE_STATION_NAME;
+import static com.zindolla.radioamoris.MainActivity.TOSERVICE_AVAILABLE_STATIONS;
+import static com.zindolla.radioamoris.MainActivity.TOSERVICE_STATION_UID;
 import static com.zindolla.radioamoris.NotificationWrapper.CHANNEL_ID;
 
 public class RadioAmorisService extends Service {
@@ -46,7 +45,7 @@ public class RadioAmorisService extends Service {
 
     public final static String BUNDLED_LISTENER = "listener";
     private final static String TAG = RadioAmorisService.class.getSimpleName();
-    private List<Station>  mFavourites;
+    private List<Station>  mAvailableChannels;
     private int mCurrIndex = 0;
 
     @Override
@@ -55,25 +54,25 @@ public class RadioAmorisService extends Service {
     }
 
     private Station moveForward(){
-        if(mFavourites.size() == 0){
+        if(mAvailableChannels.size() == 0){
             return null;
         }
         mCurrIndex++;
-        if(mCurrIndex >= mFavourites.size()){
+        if(mCurrIndex >= mAvailableChannels.size()){
             mCurrIndex = 0;
         }
-        return mFavourites.get(mCurrIndex);
+        return mAvailableChannels.get(mCurrIndex);
     }
 
     private Station moveBackward(){
-        if(mFavourites.size() == 0){
+        if(mAvailableChannels.size() == 0){
             return null;
         }
         mCurrIndex--;
         if(mCurrIndex < 0){
-            mCurrIndex = mFavourites.size() - 1;
+            mCurrIndex = mAvailableChannels.size() - 1;
         }
-        return  mFavourites.get(mCurrIndex);
+        return  mAvailableChannels.get(mCurrIndex);
     }
 
     private void openAudioStream(Station current){
@@ -107,11 +106,9 @@ public class RadioAmorisService extends Service {
         ui_callback = intent.getParcelableExtra(BUNDLED_LISTENER);
 
         if (action.equalsIgnoreCase(AUDIO_CREATE)) {
-            Station current = new Station(-1, intent.getStringExtra(TOSERVICE_STATION_NAME), "", intent.getStringExtra(TOSERVICE_AUDIO_URL));
-            mFavourites = intent.getParcelableArrayListExtra(TOSERVICE_FAVOURITES);
-            mCurrIndex = 0;
-            mFavourites.add(mCurrIndex, current);
-            openAudioStream(current);
+            mAvailableChannels = intent.getParcelableArrayListExtra(TOSERVICE_AVAILABLE_STATIONS);
+            mCurrIndex = Integer.parseInt(intent.getStringExtra(TOSERVICE_STATION_UID));
+            openAudioStream(mAvailableChannels.get(mCurrIndex));
         } else if (action.equalsIgnoreCase(AUDIO_RESUME)) {
             mController.getTransportControls().play();
         } else if (action.equalsIgnoreCase(AUDIO_PAUSE)) {
@@ -146,16 +143,16 @@ public class RadioAmorisService extends Service {
         android.support.v4.media.app.NotificationCompat.MediaStyle style = new android.support.v4.media.app.NotificationCompat.MediaStyle();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_radio)
-                .setContentTitle(mFavourites == null ? "" : mFavourites.get(mCurrIndex).name)
-                .setContentText("World Tunes Radio")
+                .setContentTitle(mAvailableChannels == null ? "" : mAvailableChannels.get(mCurrIndex).descr)
+                .setContentText("Radio Amoris")
                 .setContentIntent(showAppIntentPending)
                 .setStyle(style);
 
-        if(mFavourites.size() > 1){
+        if(mAvailableChannels != null && mAvailableChannels.size() > 1){
             builder.addAction(generateAction(android.R.drawable.ic_media_previous, "Previous", ACTION_PREVIOUS));
         }
         builder.addAction(action);
-        if(mFavourites.size() > 1){
+        if(mAvailableChannels != null && mAvailableChannels.size() > 1){
             builder.addAction(generateAction(android.R.drawable.ic_media_next, "Next", ACTION_NEXT));
             style.setShowActionsInCompactView(0, 1, 2);
         }

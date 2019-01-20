@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:radio_amoris/audioctl.dart';
 import 'dart:convert';
 
-import 'package:radio_amoris/radiostations.dart';
+import 'package:radio_amoris/shared_selection.dart';
 
 class Station extends StatefulWidget{
   final String _descr;
@@ -12,11 +12,9 @@ class Station extends StatefulWidget{
   final AudioCtl _playerCtl;
   final int _uid;
   final ValueChanged<int> itemSelectedCallback;
-  final ValueChanged<String> itemUrlCallback;
 
   Station(this._playerCtl, this._uid, this._descr, this._baseUrl, {
-      @required this.itemSelectedCallback,
-      @required this.itemUrlCallback });
+      @required this.itemSelectedCallback });
 
   @override
   State<StatefulWidget> createState() {
@@ -73,14 +71,12 @@ class StationState extends State<Station>{
         if(_isSelected(sharedSel.uid)){
           if (PlayerState.paused == sharedSel.playerstate) {
             widget._playerCtl.playerState = PlayerState.inprogress;
-            widget._playerCtl.setmedia(widget._baseUrl);
+            widget._playerCtl.create(widget._uid);
             widget._playerCtl.resume();
           } else {
-            widget.itemUrlCallback(widget._baseUrl);
             widget._playerCtl.pause();
           }
         }else if (PlayerState.playing == sharedSel.playerstate){
-          widget._playerCtl.playerState = PlayerState.pauseresume;
           widget._playerCtl.pause();
         }
       },
@@ -96,6 +92,7 @@ class StationState extends State<Station>{
     var icondata = Icons.play_circle_outline;
     if(_isSelected(sharedSel.uid)) {
       switch(sharedSel.playerstate){
+        case PlayerState.destroyed:
         case PlayerState.created:
         case PlayerState.paused:
           icondata = Icons.pause_circle_outline;
@@ -104,7 +101,6 @@ class StationState extends State<Station>{
           icondata = Icons.play_circle_outline;
           break;
         case PlayerState.inprogress:
-        case PlayerState.pauseresume:
           icondata = Icons.loop;
           break;
       }

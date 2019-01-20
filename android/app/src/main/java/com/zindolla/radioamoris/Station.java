@@ -5,21 +5,18 @@ import android.os.Parcelable;
 
 public class Station implements Parcelable {
     int id;
-    String name;
-    String logo;
+    String descr;
     String url;
 
     private Station(Parcel in) {
         id = in.readInt();
-        name = in.readString();
-        logo = in.readString();
+        descr = in.readString();
         url = in.readString();
     }
 
-    Station(int id, String name, String logo, String url) {
+    Station(int id, String descr, String url) {
         this.id = id;
-        this.name = name;
-        this.logo = logo;
+        this.descr = descr;
         this.url = url;
     }
 
@@ -43,8 +40,7 @@ public class Station implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeString(name);
-        dest.writeString(logo);
+        dest.writeString(descr);
         dest.writeString(url);
     }
 }

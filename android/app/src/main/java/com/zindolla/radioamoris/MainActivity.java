@@ -18,9 +18,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 
 public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler {
 
-    public  static final String TOSERVICE_AUDIO_URL = "Audio.URL";
-    public  static final String TOSERVICE_STATION_NAME = "Audio.station.name";
-    protected static final String TOSERVICE_FAVOURITES = "Audio.station.favourites";
+    public  static final String TOSERVICE_STATION_UID = "Audio.station.name";
+    public  static final String TOSERVICE_AVAILABLE_STATIONS = "Audio.station.list";
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -30,7 +29,7 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         GeneratedPluginRegistrant.registerWith(this);
-        channel = new MethodChannel(getFlutterView(), "com.zindolla.flutter/audio");
+        channel = new MethodChannel(getFlutterView(), "com.zindolla.radio_amoris/audio");
         channel.setMethodCallHandler(this);
     }
 
@@ -49,22 +48,16 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         String action = null;
         switch (call.method) {
             case "create":
-                String mediaUrl = call.argument("url") == null ? "" :
-                        call.argument("url").toString();
-                String stationName = call.argument("station") == null ? "" :
-                        call.argument("station").toString();
-                intent.putExtra(TOSERVICE_AUDIO_URL, mediaUrl);
-                intent.putExtra(TOSERVICE_STATION_NAME, stationName);
-                ArrayList<Station> favourites = new ArrayList<>();
-                List<Map<String,String>> rawFavs = call.argument("favorites");
-                if (rawFavs != null){
-                    for (Map<String, String> el: rawFavs)
-                    {
-                        int id = el.get("id") == null ? -1 : Integer.parseInt(el.get("id"));
-                        favourites.add(new Station(id, el.get("name"), el.get("logo"), el.get("url")));
-                    }
+                int mediaId = call.argument("id");
+                intent.putExtra(TOSERVICE_STATION_UID, mediaId);
+                List<Map< Integer, Map<String,String>>> rawFavs = call.argument("stations");
+                ArrayList<Station> stations = new ArrayList<>();
+                for (Map< Integer, Map<String,String>> el: rawFavs){
+                    int id = el.keySet().iterator().next();
+                    Map<String,String> value = el.get(id);
+                    stations.add(new Station(id, value.get("descr"), value.get("url")));
                 }
-                intent.putParcelableArrayListExtra(TOSERVICE_FAVOURITES, favourites);
+                intent.putParcelableArrayListExtra(TOSERVICE_AVAILABLE_STATIONS, stations);
                 action = RadioAmorisService.AUDIO_CREATE;
                 break;
             case "pause":
