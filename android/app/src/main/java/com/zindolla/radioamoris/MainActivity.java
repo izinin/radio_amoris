@@ -48,14 +48,12 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
         String action = null;
         switch (call.method) {
             case "create":
-                int mediaId = call.argument("id");
+                int mediaId = call.argument("selection");
                 intent.putExtra(TOSERVICE_STATION_UID, mediaId);
-                List<Map< Integer, Map<String,String>>> rawFavs = call.argument("stations");
+                List<Map<String,String>> rawFavs = call.argument("stations");
                 ArrayList<Station> stations = new ArrayList<>();
-                for (Map< Integer, Map<String,String>> el: rawFavs){
-                    int id = el.keySet().iterator().next();
-                    Map<String,String> value = el.get(id);
-                    stations.add(new Station(id, value.get("descr"), value.get("url")));
+                for (Map<String,String> el: rawFavs){
+                    stations.add(new Station(Integer.parseInt(el.get("id")), el.get("descr"), el.get("url")));
                 }
                 intent.putParcelableArrayListExtra(TOSERVICE_AVAILABLE_STATIONS, stations);
                 action = RadioAmorisService.AUDIO_CREATE;

@@ -49,8 +49,14 @@ class AudioCtl {
   get state => playerState;
 
   Completer create(int id) {
-    _channel.invokeMethod('create', {'id': id, 
-      'stations': StationsData.entries.toList()});
+    var stations = StationsData.map((id, val) => MapEntry(id, 
+        Map<String, String>.unmodifiable({
+          "id" : id.toString(),
+          "url" : val['url'],
+          "descr" : val['descr']})
+      )).values.toList();
+    _channel.invokeMethod('create', {'selection': id, 
+      'stations': stations});
     return new Completer();
   }
 
