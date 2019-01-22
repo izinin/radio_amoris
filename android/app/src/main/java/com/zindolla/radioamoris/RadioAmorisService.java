@@ -37,6 +37,7 @@ public class RadioAmorisService extends Service {
     public static final String ACTION_NEXT = "action_next";
     public static final String ACTION_PREVIOUS = "action_previous";
 
+    public static int UNDEFINED_INT = -1;
     private MediaSession mSession = null;
     private MediaController mController = null;
     private MediaPlayer mPlayer = null;
@@ -107,8 +108,12 @@ public class RadioAmorisService extends Service {
 
         if (action.equalsIgnoreCase(AUDIO_CREATE)) {
             mAvailableChannels = intent.getParcelableArrayListExtra(TOSERVICE_AVAILABLE_STATIONS);
-            mCurrIndex = Integer.parseInt(intent.getStringExtra(TOSERVICE_STATION_UID));
-            openAudioStream(mAvailableChannels.get(mCurrIndex));
+            mCurrIndex = intent.getIntExtra(TOSERVICE_STATION_UID, UNDEFINED_INT);
+            if(mCurrIndex == UNDEFINED_INT){
+                Log.e(TAG, "Inconsistency error,'mCurrIndex' is not set");
+            }else{
+                openAudioStream(mAvailableChannels.get(mCurrIndex));
+            }
         } else if (action.equalsIgnoreCase(AUDIO_RESUME)) {
             mController.getTransportControls().play();
         } else if (action.equalsIgnoreCase(AUDIO_PAUSE)) {
