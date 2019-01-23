@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:radio_amoris/stationsdata.dart';
+import 'stationsdata.dart';
 
 enum PlayerState { created, destroyed, playing, paused, inprogress }
 

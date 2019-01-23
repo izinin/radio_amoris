@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'audioctl.dart';
 import 'listitem.dart';
 import 'stationsdata.dart';
-import 'shared_selection.dart';
 
 class RadioStations extends StatefulWidget {
 
@@ -44,22 +43,14 @@ class StationlistState  extends State<RadioStations>{
   @override
   Widget build(BuildContext context) {
     final title = 'ANIMA AMORIS';
-
-    return MaterialApp(
-      title: title,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-        ),
-        body: SharedSelection(
-          child: ListView(
-                children: _widgetArr,
-              ),
-          playerstate: _playerCtl.state,
-          uid: _selected,
-          )
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
       ),
-    );
+      body: ListView(
+              children: _widgetArr,
+            )
+      );
   }
 
   void initAmorisData() {

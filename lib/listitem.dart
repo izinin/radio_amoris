@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:radio_amoris/audioctl.dart';
+import 'package:radio_amoris/amoris_model.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'audioctl.dart';
 import 'dart:convert';
-
-import 'package:radio_amoris/shared_selection.dart';
 
 class Station extends StatefulWidget{
   final String _descr;
@@ -45,42 +45,43 @@ class StationState extends State<Station>{
     
   @override
   Widget build(BuildContext context) {
-    final sharedSel = SharedSelection.of(context);
-    return ListTile(
-      leading: _getIgon(sharedSel),
-      title: Text(widget._descr),
-      subtitle: _allowhttp ? FutureBuilder<ChanInfo>(
-        future: _fetchChanInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            _lastsongtitle = '${snapshot.data.songtitle} \nlisteners: ${snapshot.data.uniquelisteners}';
-            return Text(_lastsongtitle);
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          // By default, show a loading spinner
-          return Text('...');
-        },
-      ) : Text(_lastsongtitle),
-      isThreeLine: true,
-      onTap: (){
-        widget.itemSelectedCallback(widget._uid);
-        setState(() { 
-          _selected = (sharedSel.uid == widget._uid);
-        });
-        if(_isSelected(sharedSel.uid)){
-          if (PlayerState.paused == sharedSel.playerstate) {
-            widget._playerCtl.playerState = PlayerState.inprogress;
-            widget._playerCtl.create(widget._uid);
-            widget._playerCtl.resume();
-          } else {
+    return new ScopedModelDescendant<AmorisModel>(
+      builder: (context, child, model) => new ListTile(  // sharedSel ----> FIXME! Text('${model.counter}'),
+        leading: _getIgon(sharedSel),
+        title: Text(widget._descr),
+        subtitle: _allowhttp ? FutureBuilder<ChanInfo>(
+          future: _fetchChanInfo(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              _lastsongtitle = '${snapshot.data.songtitle} \nlisteners: ${snapshot.data.uniquelisteners}';
+              return Text(_lastsongtitle);
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            // By default, show a loading spinner
+            return Text('...');
+          },
+        ) : Text(_lastsongtitle),
+        isThreeLine: true,
+        onTap: (){
+          widget.itemSelectedCallback(widget._uid);
+          setState(() { 
+            _selected = (sharedSel.uid == widget._uid);
+          });
+          if(_isSelected(sharedSel.uid)){
+            if (PlayerState.paused == sharedSel.playerstate) {
+              widget._playerCtl.playerState = PlayerState.inprogress;
+              widget._playerCtl.create(widget._uid);
+              widget._playerCtl.resume();
+            } else {
+              widget._playerCtl.pause();
+            }
+          }else if (PlayerState.playing == sharedSel.playerstate){
             widget._playerCtl.pause();
           }
-        }else if (PlayerState.playing == sharedSel.playerstate){
-          widget._playerCtl.pause();
-        }
-      },
-      selected: _isSelected(sharedSel.uid)
+        },
+        selected: _isSelected(sharedSel.uid)
+      )
     );
   }
 
