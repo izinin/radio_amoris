@@ -108,10 +108,18 @@ public class RadioAmorisService extends Service {
 
         if (action.equalsIgnoreCase(AUDIO_CREATE)) {
             mAvailableChannels = intent.getParcelableArrayListExtra(TOSERVICE_AVAILABLE_STATIONS);
-            mCurrIndex = intent.getIntExtra(TOSERVICE_STATION_UID, UNDEFINED_INT);
-            if(mCurrIndex == UNDEFINED_INT){
+            int sel = intent.getIntExtra(TOSERVICE_STATION_UID, UNDEFINED_INT);
+            if(sel == UNDEFINED_INT){
                 Log.e(TAG, "Inconsistency error,'mCurrIndex' is not set");
             }else{
+                mCurrIndex = 0;
+                for(int i = 0; i < mAvailableChannels.size(); i++){
+                    Station st = mAvailableChannels.get(i);
+                    if(st.id == sel){
+                        mCurrIndex = i;
+                        break;
+                    }
+                }
                 openAudioStream(mAvailableChannels.get(mCurrIndex));
             }
         } else if (action.equalsIgnoreCase(AUDIO_RESUME)) {
@@ -281,26 +289,4 @@ public class RadioAmorisService extends Service {
             }
         }, 100);
     }
-
-//    public int onStartCommand_0(Intent intent, int flags, int startId) {
-//        Intent notificationIntent = new Intent(this, MainActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-//                0, notificationIntent, 0);
-//
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-//        builder.setContentTitle("audioplayer.getStationName()");
-//        builder.setContentText("World Tunes Radio");
-//        builder.setSmallIcon(R.drawable.ic_play);
-//        builder.setContentIntent(pendingIntent);
-//        builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
-//        Notification notification = builder.build();
-//
-//        startForeground(1, notification);
-//
-//        //do heavy work on a background thread
-//        //stopSelf();
-//
-//        return START_NOT_STICKY;
-//    }
-
 }

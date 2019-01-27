@@ -3,18 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:radio_amoris/amoris_model.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'audioctl.dart';
 import 'dart:convert';
 
 class Station extends StatefulWidget{
   final String _descr;
   final String _baseUrl;
-  final AudioCtl _playerCtl;
   final int _uid;
-  final ValueChanged<int> itemSelectedCallback;
 
-  Station(this._playerCtl, this._uid, this._descr, this._baseUrl, {
-      @required this.itemSelectedCallback });
+  Station(this._uid, this._descr, this._baseUrl);
 
   @override
   State<StatefulWidget> createState() {
@@ -23,7 +19,6 @@ class Station extends StatefulWidget{
 }
 
 class StationState extends State<Station>{
-  bool _selected = false;
   var _client = new http.Client();
   bool _allowhttp = true;
   String _lastsongtitle = '...';
@@ -47,7 +42,7 @@ class StationState extends State<Station>{
   Widget build(BuildContext context) {
     return new ScopedModelDescendant<AmorisModel>(
       builder: (context, child, model) => new ListTile(  // sharedSel ----> FIXME! Text('${model.counter}'),
-        leading: _getIgon(sharedSel),
+        leading: model.getIgon(widget._uid),
         title: Text(widget._descr),
         subtitle: _allowhttp ? FutureBuilder<ChanInfo>(
           future: _fetchChanInfo(),
@@ -64,49 +59,11 @@ class StationState extends State<Station>{
         ) : Text(_lastsongtitle),
         isThreeLine: true,
         onTap: (){
-          widget.itemSelectedCallback(widget._uid);
-          setState(() { 
-            _selected = (sharedSel.uid == widget._uid);
-          });
-          if(_isSelected(sharedSel.uid)){
-            if (PlayerState.paused == sharedSel.playerstate) {
-              widget._playerCtl.playerState = PlayerState.inprogress;
-              widget._playerCtl.create(widget._uid);
-              widget._playerCtl.resume();
-            } else {
-              widget._playerCtl.pause();
-            }
-          }else if (PlayerState.playing == sharedSel.playerstate){
-            widget._playerCtl.pause();
-          }
+          model.select(widget._uid);
         },
-        selected: _isSelected(sharedSel.uid)
+        selected: model.isSelected(widget._uid)
       )
     );
-  }
-
-  bool _isSelected(int uid){
-    return (uid == -1 || uid == widget._uid) && _selected;
-  }
-
-  _getIgon(SharedSelection sharedSel) {
-    var icondata = Icons.play_circle_outline;
-    if(_isSelected(sharedSel.uid)) {
-      switch(sharedSel.playerstate){
-        case PlayerState.destroyed:
-        case PlayerState.created:
-        case PlayerState.paused:
-          icondata = Icons.pause_circle_outline;
-          break;
-        case PlayerState.playing:
-          icondata = Icons.play_circle_outline;
-          break;
-        case PlayerState.inprogress:
-          icondata = Icons.loop;
-          break;
-      }
-    }
-    return new Icon(icondata);
   }
 }
 

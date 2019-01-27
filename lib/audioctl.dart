@@ -11,7 +11,7 @@ class AudioCtl {
   final MethodChannel _channel = new MethodChannel('com.zindolla.radio_amoris/audio');
   Map<String, VoidCallback> _callbacks;
 
-  PlayerState playerState = PlayerState.paused;
+  PlayerState _playerState = PlayerState.paused;
 
   final VoidCallback _onCreated;
   final VoidCallback _onDestroying;
@@ -46,7 +46,7 @@ class AudioCtl {
   }
 
 
-  get state => playerState;
+  get state => _playerState;
 
   Completer create(int id) {
     var stations = StationsData.map((id, val) => MapEntry(id, 
@@ -63,4 +63,8 @@ class AudioCtl {
   Future destroy() => _channel.invokeMethod('destroy');
   Future pause() => _channel.invokeMethod('pause');
   Future resume() => _channel.invokeMethod('resume');
+
+  void setState(PlayerState newval) {
+    _playerState = newval;
+  }
 }
