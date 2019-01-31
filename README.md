@@ -5,6 +5,10 @@
 A Flutter project. This is a companion application to [electronic music stream collection](https://anima.sknt.ru/) 
 Trance And Uplifting Music, Psychedelic Dance Electronic, Acid Trance Electronic, Experimental Noise Space Dark Drone Electronic.
 
+<a href='https://play.google.com/store/apps/details?id=com.zindolla.radioamoris&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="200"/></a>
+
+[need designer?](https://www.instagram.com/zizinatart/)
+
 ## Getting Started
 
 For help getting started with Flutter, check 
