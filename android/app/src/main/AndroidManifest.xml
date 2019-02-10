@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.zindolla.radioamoris">
 
     <!-- The INTERNET permission is required for development. Specifically,
@@ -19,7 +20,8 @@
     <application
         android:name=".NotificationWrapper"
         android:label="Radio Amoris"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

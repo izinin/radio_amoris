@@ -4,7 +4,7 @@ description: radio Amoris.
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
 
-version: 0.0.2+2
+version: 0.0.3+3
 
 dependencies:
   flutter:

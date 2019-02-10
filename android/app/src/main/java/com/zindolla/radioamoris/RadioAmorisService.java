@@ -86,7 +86,7 @@ public class RadioAmorisService extends Service {
         try {
             mPlayer.setDataSource(current.url);
             mPlayer.prepareAsync();
-            delayedCall(4000);
+            delayedCall(10000);
         }catch (IllegalArgumentException e){
             Log.e(TAG, String.format("createPlayer, IllegalArgumentException: %s", e.getMessage()));
         }catch (SecurityException e){
