@@ -1,6 +1,7 @@
 package com.zindolla.radioamoris;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,10 +25,16 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private MethodChannel channel;
+    private static Context context;
+
+    public static Context getAppContext() {
+        return MainActivity.context;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity.context = getApplicationContext();
         GeneratedPluginRegistrant.registerWith(this);
         channel = new MethodChannel(getFlutterView(), "com.zindolla.radio_amoris/audio");
         channel.setMethodCallHandler(this);

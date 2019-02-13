@@ -48,6 +48,7 @@ public class RadioAmorisService extends Service {
     private final static String TAG = RadioAmorisService.class.getSimpleName();
     private List<Station>  mAvailableChannels;
     private int mCurrIndex = 0;
+    private AudioFocusUtitlity mAudioFocus;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -210,7 +211,8 @@ public class RadioAmorisService extends Service {
         player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
-                mediaPlayer.start();
+                mAudioFocus.tryPlayback();
+                // mediaPlayer.start();
                 isMediaOpened = true;
                 // update notification
                 buildNotification(generateAction(android.R.drawable.ic_media_pause, "Pause", AUDIO_PAUSE), Activity.RESULT_OK);
@@ -225,6 +227,7 @@ public class RadioAmorisService extends Service {
 
         mSession = new MediaSession(getApplicationContext(), "simple player session");
         mController = new MediaController(getApplicationContext(), mSession.getSessionToken());
+        mAudioFocus = new AudioFocusUtitlity(mController);
 
         mSession.setCallback(
                 new MediaSession.Callback() {
@@ -232,6 +235,7 @@ public class RadioAmorisService extends Service {
                     public void onStop() {
                         if(isMediaOpened){
                             mPlayer.stop();
+                            mAudioFocus.finishPlayback();
                         }
                         mPlayer.reset();
                         Log.e(TAG, "onStop");
