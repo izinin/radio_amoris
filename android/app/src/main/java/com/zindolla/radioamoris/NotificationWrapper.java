@@ -6,6 +6,8 @@ import android.app.NotificationManager;
 import android.os.Build;
 import android.util.Log;
 
+import static android.app.NotificationManager.IMPORTANCE_LOW;
+
 public class NotificationWrapper extends io.flutter.app.FlutterApplication {
     public static final String CHANNEL_ID = "RadioAmorisServiceChannel";
     private final static String TAG = NotificationWrapper.class.getSimpleName();
@@ -22,7 +24,7 @@ public class NotificationWrapper extends io.flutter.app.FlutterApplication {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Radio Amoris",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    IMPORTANCE_LOW
             );
 
             NotificationManager manager = getSystemService(NotificationManager.class);
