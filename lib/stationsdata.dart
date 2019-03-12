@@ -62,5 +62,9 @@ const StationsData = {
    16:{
       'url':'http://amoris.sknt.ru:8028',
       'descr':'"Electro" 160 MP3',
-   }
+   },
+   17:{
+      'url':'http://93.100.61.75:8026',
+      'descr':'"Библия (Bible in Russian)" 128 MP3',
+   },
 };

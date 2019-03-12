@@ -32,7 +32,7 @@ class StationState extends State<Station>{
     _allowhttp = false;
     if (response.statusCode == 200) {
       new Timer(const Duration(seconds: 30), ()=> _allowhttp = true);
-      return ChanInfo.fromJson(json.decode(response.body));
+      return ChanInfo.fromJson(json.decode(utf8.decode(response.bodyBytes)));
     } else {
       throw Exception('Failed to load channel info');
     }
