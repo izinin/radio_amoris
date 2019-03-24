@@ -11,10 +11,6 @@ const StationsData = {
       'url':'http://amoris.sknt.ru:8000',
       'descr':'"Dub Techno" 320 MP3',
    },
-   4:{
-      'url':'http://amoris.sknt.ru:8002',
-      'descr':'"Dub Techno" 56 AAC+',
-   },
    15:{
       'url':'http://amoris.sknt.ru:8024',
       'descr':'"Dub Techno Mix" 320 MP3',
