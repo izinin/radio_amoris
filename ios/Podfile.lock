@@ -1,0 +1,23 @@
+PODS:
+  - Flutter (1.0.0)
+  - SwiftAudio (0.11.1)
+
+DEPENDENCIES:
+  - Flutter (from `Pods/.symlinks/flutter/ios`)
+  - SwiftAudio (~> 0.11.1)
+
+SPEC REPOS:
+  trunk:
+    - SwiftAudio
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Pods/.symlinks/flutter/ios
+
+SPEC CHECKSUMS:
+  Flutter: bd837cb4c6faaf738bc642e6cc5340ea23e64d5d
+  SwiftAudio: f71f0a94068539bf7819b6cc753c0e5dec89621f
+
+PODFILE CHECKSUM: 6f4875b24ef55e4973aaa1ebf9df42673d4da807
+
+COCOAPODS: 1.8.4
