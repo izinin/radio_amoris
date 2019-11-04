@@ -30,13 +30,28 @@ import MediaPlayer
             // Note: this method is invoked on the UI thread.
             switch call.method{
             case "create":
-                self?.audioItem = DefaultAudioItem(audioUrl: "https://p.scdn.co/mp3-preview/67b51d90ffddd6bb3f095059997021b589845f81?cid=d8a5ed958d274c2e8ee717e6a4b0971d", sourceType: .stream)
-                do {
-                    try self?.player.load(item: self!.audioItem, playWhenReady: true)
-                    self?.setupNowPlaying()
-                } catch {
-                    print("The stream could not be loaded")
+                guard let args = call.arguments else {
+                    return
                 }
+                if let myArgs = args as? [String: Any],
+                    let selection = myArgs["selection"] as? Int,
+                    let stations = myArgs["stations"] as? [[String: String]] {
+                    guard stations.indices.contains(selection),
+                        stations[selection]["url"] != nil else {
+                            print("setMethodCallHandler error : malformed 'create' request data")
+                            return
+                    }
+                    self?.audioItem = DefaultAudioItem(audioUrl: stations[selection]["url"]!, sourceType: .stream)
+                    do {
+                        try self?.player.load(item: self!.audioItem, playWhenReady: true)
+                        self?.setupNowPlaying()
+                    } catch {
+                        print("The stream could not be loaded")
+                    }
+                } else {
+                    result("iOS could not extract flutter arguments in method: (sendParams)")
+                }
+                
                 break
             case "pause":
                 break
@@ -87,8 +102,8 @@ import MediaPlayer
                     return image
             }
         }
-        nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = 0//self.player.currentItem.currentTime().seconds
-        nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 3*60 //self.player.currentItem.asset.duration.seconds
+        //nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = 0//self.player.currentItem.currentTime().seconds
+        //nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 3*60 //self.player.currentItem.asset.duration.seconds
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = player.rate
         
         // Set the metadata
