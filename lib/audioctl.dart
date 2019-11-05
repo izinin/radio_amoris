@@ -55,7 +55,7 @@ class AudioCtl {
           "url" : val['url'],
           "descr" : val['descr']})
       )).values.toList();
-    _channel.invokeMethod('create', {'selection': id, 
+    _channel.invokeMethod('create', {'selection': id - 1, //NOTE: id is 1-based, but in the array it is 0-based
       'stations': stations});
     return new Completer();
   }

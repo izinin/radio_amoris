@@ -24,7 +24,8 @@ class StationState extends State<Station>{
   String _lastsongtitle = '...';
 
   Future<ChanInfo> _fetchChanInfo() async {
-    final response = await _client.get(widget._baseUrl + '/stats.json',
+    final url = 'https://amoris.sknt.ru/sc/${widget._uid}/stats.json';
+    final response = await _client.get(url,
       headers: {
         'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36'
       }
