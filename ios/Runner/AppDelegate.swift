@@ -5,6 +5,7 @@ import MediaPlayer
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
+    // https://github.com/jorgenhenrichsen/SwiftAudio
     var player: AudioPlayer = AudioPlayer()
     var audioItem: AudioItem!
     
@@ -12,6 +13,7 @@ import MediaPlayer
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
     ) -> Bool {
+        self.player.event.stateChange.addListener(self, self.handleAudioPlayerStateChange)
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, mode: AVAudioSessionModeDefault, options: [.defaultToSpeaker, .allowAirPlay, .allowBluetooth])
             print("Playback OK")
@@ -30,6 +32,7 @@ import MediaPlayer
             // Note: this method is invoked on the UI thread.
             switch call.method{
             case "create":
+                self?.player.stop()
                 guard let args = call.arguments else {
                     return
                 }
@@ -44,7 +47,7 @@ import MediaPlayer
                     self?.audioItem = DefaultAudioItem(audioUrl: stations[selection]["url"]!, sourceType: .stream)
                     do {
                         try self?.player.load(item: self!.audioItem, playWhenReady: true)
-                        self?.setupNowPlaying()
+                        self?.player.nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.isLiveStream(true))
                     } catch {
                         print("The stream could not be loaded")
                     }
@@ -54,10 +57,13 @@ import MediaPlayer
                 
                 break
             case "pause":
+                self?.player.togglePlaying()
                 break
             case "resume":
+                self?.player.play()
                 break
             case "destroy":
+                self?.player.stop()
                 break
             default:
                 result(FlutterMethodNotImplemented)
@@ -109,4 +115,9 @@ import MediaPlayer
         // Set the metadata
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
+    
+    func handleAudioPlayerStateChange(state: AudioPlayerState) {
+        print("handleAudioPlayerStateChange: \(state)")
+    }
+    
 }
