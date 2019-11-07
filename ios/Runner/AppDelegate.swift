@@ -8,6 +8,8 @@ import MediaPlayer
     // https://github.com/jorgenhenrichsen/SwiftAudio
     var player: AudioPlayer = AudioPlayer()
     var audioItem: AudioItem!
+    var audioCtlChannel: FlutterMethodChannel!
+    var action: String!
     
     override func application(
         _ application: UIApplication,
@@ -25,12 +27,13 @@ import MediaPlayer
         self.setupRemoteTransportControls()
         
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-        let audioCtlChannel = FlutterMethodChannel(name: "com.zindolla.radio_amoris/audio",
+        self.audioCtlChannel = FlutterMethodChannel(name: "com.zindolla.radio_amoris/audio",
                                                    binaryMessenger: controller.binaryMessenger)
         audioCtlChannel.setMethodCallHandler({
             [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
             // Note: this method is invoked on the UI thread.
-            switch call.method{
+            self?.action = call.method
+            switch self?.action{
             case "create":
                 self?.player.stop()
                 guard let args = call.arguments else {
@@ -57,13 +60,14 @@ import MediaPlayer
                 
                 break
             case "pause":
-                self?.player.togglePlaying()
+                self?.player.pause()
                 break
             case "resume":
                 self?.player.play()
                 break
             case "destroy":
                 self?.player.stop()
+                result("audio.onDestroy")
                 break
             default:
                 result(FlutterMethodNotImplemented)
@@ -117,6 +121,19 @@ import MediaPlayer
     }
     
     func handleAudioPlayerStateChange(state: AudioPlayerState) {
+        var notifyState = "audio.onError"
+        switch(state){
+        case AudioPlayerState.playing:
+            notifyState = self.action == "resume" ? "audio.onResume" : "audio.onCreate"
+            break
+        case AudioPlayerState.paused:
+            notifyState = "audio.onPause"
+            break
+        default:
+            break
+        }
+        self.audioCtlChannel.invokeMethod(notifyState, arguments: 0)
+
         print("handleAudioPlayerStateChange: \(state)")
     }
     
