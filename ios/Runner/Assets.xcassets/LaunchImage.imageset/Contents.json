@@ -17,14 +17,17 @@
     },
     {
       "idiom" : "iphone",
+      "filename" : "iosl.png",
       "scale" : "1x"
     },
     {
       "idiom" : "iphone",
+      "filename" : "iosl-1.png",
       "scale" : "2x"
     },
     {
       "idiom" : "iphone",
+      "filename" : "iosl-2.png",
       "scale" : "3x"
     }
   ],
