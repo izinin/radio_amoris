@@ -10,7 +10,9 @@ import MediaPlayer
     var audioItem: AudioItem!
     var audioCtlChannel: FlutterMethodChannel!
     var action: String!
-    
+    var selection: Int = 0
+    var stations: [[String: String]]!
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
@@ -24,7 +26,15 @@ import MediaPlayer
         } catch {
             print(error)
         }
-        self.setupRemoteTransportControls()
+        player.remoteCommands=[.play, .pause, .next, .previous]
+        player.remoteCommandController.handleNextTrackCommand = { (event) in
+            self.playTrack(next: true)
+            return .success
+        }
+        player.remoteCommandController.handlePreviousTrackCommand = { (event) in
+            self.playTrack(next: false)
+            return .success
+        }
         
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
         self.audioCtlChannel = FlutterMethodChannel(name: "com.zindolla.radio_amoris/audio",
@@ -47,13 +57,9 @@ import MediaPlayer
                             print("setMethodCallHandler error : malformed 'create' request data")
                             return
                     }
-                    self?.audioItem = DefaultAudioItem(audioUrl: stations[selection]["url"]!, sourceType: .stream)
-                    do {
-                        try self?.player.load(item: self!.audioItem, playWhenReady: true)
-                        self?.player.nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.isLiveStream(true))
-                    } catch {
-                        print("The stream could not be loaded")
-                    }
+                    self?.selection = selection
+                    self?.stations = stations
+                    self?.playSelecton()
                 } else {
                     result("iOS could not extract flutter arguments in method: (sendParams)")
                 }
@@ -78,63 +84,47 @@ import MediaPlayer
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
-    func setupRemoteTransportControls() {
-        // Get the shared MPRemoteCommandCenter
-        let commandCenter = MPRemoteCommandCenter.shared()
-        
-        // Add handler for Play Command
-        commandCenter.playCommand.addTarget { [unowned self] event in
-            if self.player.rate == 0.0 {
-                self.player.play()
-                return .success
-            }
-            return .commandFailed
-        }
-        
-        // Add handler for Pause Command
-        commandCenter.pauseCommand.addTarget { [unowned self] event in
-            if self.player.rate == 1.0 {
-                self.player.pause()
-                return .success
-            }
-            return .commandFailed
-        }
-    }
-    
-    func setupNowPlaying() {
-        // Define Now Playing Info
-        var nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = "My Movie"
-        
-        if let image = UIImage(named: "lockscreen") {
-            nowPlayingInfo[MPMediaItemPropertyArtwork] =
-                MPMediaItemArtwork(boundsSize: image.size) { size in
-                    return image
-            }
-        }
-        //nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = 0//self.player.currentItem.currentTime().seconds
-        //nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = 3*60 //self.player.currentItem.asset.duration.seconds
-        nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = player.rate
-        
-        // Set the metadata
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
-    }
-    
     func handleAudioPlayerStateChange(state: AudioPlayerState) {
         var notifyState = "audio.onError"
         switch(state){
         case AudioPlayerState.playing:
             notifyState = self.action == "resume" ? "audio.onResume" : "audio.onCreate"
+            self.audioCtlChannel.invokeMethod(notifyState, arguments: 0)
             break
         case AudioPlayerState.paused:
             notifyState = "audio.onPause"
+            self.audioCtlChannel.invokeMethod(notifyState, arguments: 0)
             break
         default:
             break
         }
-        self.audioCtlChannel.invokeMethod(notifyState, arguments: 0)
 
         print("handleAudioPlayerStateChange: \(state)")
     }
     
+    func playSelecton(){
+        let url = stations[selection]["url"]!
+        let description = stations[selection]["descr"]!
+        //     public init(audioUrl: String, artist: String? = nil, title: String? = nil, albumTitle: String? = nil, sourceType: SourceType, artwork: UIImage? = nil) {
+        audioItem = DefaultAudioItem(audioUrl: url,
+                                     artist: "Radio Anima Amoris",
+                                     title: description,
+                                     sourceType: .stream)
+        do {
+            try player.load(item: audioItem, playWhenReady: true)
+            player.nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.isLiveStream(true))
+        } catch {
+            print("The stream could not be loaded")
+        }
+    }
+    
+    func playTrack(next: Bool){
+        selection += next ? 1 : -1
+        if selection >= stations.count {
+            selection = 0
+        } else if selection < 0 {
+            selection = stations.count - 1
+        }
+        playSelecton()
+    }
 }
