@@ -3,7 +3,7 @@ PODS:
   - SwiftAudio (0.11.1)
 
 DEPENDENCIES:
-  - Flutter (from `Pods/.symlinks/flutter/ios`)
+  - Flutter (from `Pods/.symlinks/flutter/ios-release`)
   - SwiftAudio (~> 0.11.1)
 
 SPEC REPOS:
@@ -12,10 +12,10 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: Pods/.symlinks/flutter/ios
+    :path: Pods/.symlinks/flutter/ios-release
 
 SPEC CHECKSUMS:
-  Flutter: bd837cb4c6faaf738bc642e6cc5340ea23e64d5d
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
   SwiftAudio: f71f0a94068539bf7819b6cc753c0e5dec89621f
 
 PODFILE CHECKSUM: b0525a34762ddf809890e032e8451fec6b14f6fb

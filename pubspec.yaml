@@ -4,7 +4,8 @@ description: radio Amoris.
 environment:
   sdk: ">=2.1.0 <3.0.0"
 
-version: 0.1.0+7
+# nm /Users/izinin/Projects/radio_amoris/build/ios/iphoneos/Runner.app/Frameworks/Flutter.framework/Flutter | grep ptrace
+version: 0.1.0+14
 
 dependencies:
   flutter:

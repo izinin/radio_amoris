@@ -109,7 +109,8 @@ import MediaPlayer
         audioItem = DefaultAudioItem(audioUrl: url,
                                      artist: "Radio Anima Amoris",
                                      title: description,
-                                     sourceType: .stream)
+                                     sourceType: .stream,
+                                     artwork: UIImage(named: "LockedScr"))
         do {
             try player.load(item: audioItem, playWhenReady: true)
             player.nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.isLiveStream(true))
