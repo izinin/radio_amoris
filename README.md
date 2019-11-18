@@ -5,14 +5,15 @@
 A Flutter project. This is a companion application to [electronic music stream collection](https://anima.sknt.ru/) 
 Trance And Uplifting Music, Psychedelic Dance Electronic, Acid Trance Electronic, Experimental Noise Space Dark Drone Electronic.
 
-
 <table style="width:60%;">
  <tr>
- <td> <a href='https://play.google.com/store/apps/details?id=com.zindolla.radioamoris&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="200"/> </a>
+ <td> <a href='https://play.google.com/store/apps/details?id=com.zindolla.radioamoris&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="200px"/> </a>
  </td>
- <td> <a href="https://apps.apple.com/us/app/radio-anima-amoris/id1487385684?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2019-11-15&kind=iossoftware&bubble=ios_apps) no-repeat;width:135px;height:40px;"></a> </td>
+ <td> <a href="https://apps.apple.com/us/app/radio-anima-amoris/id1487385684?mt=8"><img alt='Get it on App Store' src='https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2019-11-15&kind=iossoftware&bubble=ios_apps' width="175px"/></a>  
+ </td>
  </tr>
 </table>
+
 [need designer?](https://www.instagram.com/zizinatart/)
 
 ## Getting Started
