@@ -15,8 +15,9 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="radio_amoris"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Radio Amoris"
+        android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".MainActivity"
             android:label="Radio Amoris"
