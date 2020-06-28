@@ -17,11 +17,11 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.List;
 
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 
 import static com.zindolla.radioamoris.MainActivity.TOSERVICE_AVAILABLE_STATIONS;
 import static com.zindolla.radioamoris.MainActivity.TOSERVICE_STATION_UID;
-import static com.zindolla.radioamoris.NotificationWrapper.CHANNEL_ID;
+import static com.zindolla.radioamoris.MainActivity.CHANNEL_ID;
 
 public class RadioAmorisService extends Service {
 
@@ -154,7 +154,7 @@ public class RadioAmorisService extends Service {
         PendingIntent showAppIntentPending = PendingIntent.getActivity(this,
                 0, showAppIntent, 0);
 
-        android.support.v4.media.app.NotificationCompat.MediaStyle style = new android.support.v4.media.app.NotificationCompat.MediaStyle();
+        androidx.media.app.NotificationCompat.MediaStyle style = new androidx.media.app.NotificationCompat.MediaStyle();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_radio)
                 .setContentTitle(mAvailableChannels == null ? "" : mAvailableChannels.get(mCurrIndex).descr)

@@ -1,12 +1,17 @@
 package com.zindolla.radioamoris;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.v4.content.ContextCompat;
+import android.util.Log;
+// https://developer.android.com/jetpack/androidx/migrate/class-mappings
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +22,10 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
+import static android.app.NotificationManager.IMPORTANCE_LOW;
+
 public class MainActivity extends FlutterActivity implements MethodChannel.MethodCallHandler {
+    public static final String CHANNEL_ID = "RadioAmorisServiceChannel";
 
     public  static final String TOSERVICE_STATION_UID = "Audio.station.name";
     public  static final String TOSERVICE_AVAILABLE_STATIONS = "Audio.station.list";
@@ -34,8 +42,8 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createNotificationChannel();
         MainActivity.context = getApplicationContext();
-        GeneratedPluginRegistrant.registerWith(this);
         channel = new MethodChannel(getFlutterView(), "com.zindolla.radio_amoris/audio");
         channel.setMethodCallHandler(this);
     }
@@ -94,5 +102,22 @@ public class MainActivity extends FlutterActivity implements MethodChannel.Metho
                         RadioAmorisService.AUDIO_ERROR, 0);
             }
         };
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Radio Amoris",
+                    IMPORTANCE_LOW
+            );
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(serviceChannel);
+            }else{
+                Log.e(TAG, "cannot obtain NotificationManager");
+            }
+        }
     }
 }

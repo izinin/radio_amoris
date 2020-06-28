@@ -4,8 +4,8 @@ const StationsData = {
       'descr':'"Trance" 160 MP3',
    },
    2:{
-      'url':'https://anima.sknt.ru/eurodance.mp3',
-      'descr':'"Eurodance" 160 MP3',
+      'url':'http://anima.sknt.ru/trance.aac',
+      'descr':'Anima Amoris [Trance] 80 AACP',
    },
    3:{
       'url':'https://amoris.sknt.ru/dubtechno.mp3',
