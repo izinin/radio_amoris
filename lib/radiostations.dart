@@ -1,11 +1,11 @@
-
 import 'package:flutter/material.dart';
+import 'config.dart';
 import 'listitem.dart';
-import 'stationsdata.dart';
 
 class RadioStations extends StatefulWidget {
+  final Config data;
 
-  RadioStations({ Key key }) : super(key: key);
+  RadioStations(this.data, {Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -13,7 +13,7 @@ class RadioStations extends StatefulWidget {
   }
 }
 
-class StationlistState  extends State<RadioStations>{
+class StationlistState extends State<RadioStations> {
   List<Widget> _widgetArr;
 
   @override
@@ -26,23 +26,21 @@ class StationlistState  extends State<RadioStations>{
   Widget build(BuildContext context) {
     final title = 'ANIMA AMORIS';
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: ListView(
-              children: _widgetArr,
-            )
-      );
+        appBar: AppBar(
+          title: Text(title),
+        ),
+        body: ListView(
+          children: _widgetArr,
+        ));
   }
 
   void initAmorisData() {
-    var keys = StationsData.keys;
-    _widgetArr = new List<Widget>(keys.length * 2);
-    for(var i=0; i < _widgetArr.length; i += 2){
-      int uid = keys.elementAt(i ~/ 2);
-      var item = StationsData[uid];
-      _widgetArr[i] = new Station(uid, item['descr'], item['url']);
-      _widgetArr[i+1] = new Divider();
+    _widgetArr = new List<Widget>(widget.data.channels.length * 2);
+    for (var i = 0; i < _widgetArr.length; i += 2) {
+      var idx = i ~/ 2;
+      var item = widget.data.channels[idx];
+      _widgetArr[i] = new Station(idx, item);
+      _widgetArr[i + 1] = new Divider();
     }
   }
 }

@@ -3,12 +3,13 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'stationsdata.dart';
+import 'package:radio_amoris/appdata.dart';
 
 enum PlayerState { created, destroyed, playing, paused, inprogress }
 
 class AudioCtl {
-  final MethodChannel _channel = new MethodChannel('com.zindolla.radio_amoris/audio');
+  final MethodChannel _channel =
+      new MethodChannel('com.zindolla.radio_amoris/audio');
   Map<String, VoidCallback> _callbacks;
 
   PlayerState _playerState = PlayerState.paused;
@@ -19,18 +20,15 @@ class AudioCtl {
   final VoidCallback _onResumed;
   final VoidCallback _onError;
 
-  AudioCtl(this._onCreated,
-            this._onDestroying,
-            this._onPaused,
-            this._onResumed,
-            this._onError) {
+  AudioCtl(this._onCreated, this._onDestroying, this._onPaused, this._onResumed,
+      this._onError) {
     _channel.setMethodCallHandler(_platformCallHandler);
     _callbacks = Map<String, VoidCallback>.from({
-    'audio.onCreate': _onCreated,
-    'audio.onDestroy': _onDestroying,
-    'audio.onPause': _onPaused,
-    'audio.onResume': _onResumed,
-    'audio.onError': _onError
+      'audio.onCreate': _onCreated,
+      'audio.onDestroy': _onDestroying,
+      'audio.onPause': _onPaused,
+      'audio.onResume': _onResumed,
+      'audio.onError': _onError
     });
   }
 
@@ -45,18 +43,22 @@ class AudioCtl {
     }
   }
 
-
   get state => _playerState;
 
   Completer create(int id) {
-    var stations = StationsData.map((id, val) => MapEntry(id, 
-        Map<String, String>.unmodifiable({
-          "id" : id.toString(),
-          "url" : val['url'],
-          "descr" : val['descr']})
-      )).values.toList();
-    _channel.invokeMethod('create', {'selection': id - 1, //NOTE: id is 1-based, but in the array it is 0-based
-      'stations': stations});
+    var stations = appData
+        .getChannels()
+        .asMap()
+        .map((id, val) => MapEntry(
+            id,
+            Map<String, String>.unmodifiable({
+              "id": id.toString(),
+              "url": val.listenurl,
+              "descr": val.name
+            })))
+        .values
+        .toList();
+    _channel.invokeMethod('create', {'selection': id, 'stations': stations});
     return new Completer();
   }
 
