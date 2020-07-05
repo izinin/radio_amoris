@@ -44,3 +44,5 @@ app.*.map.json
 ios/Flutter/
 ios/Runner/
 android/app/private/key.jks
+ios/Pods
+ios/Runner.xcworkspace/xcuserdata
