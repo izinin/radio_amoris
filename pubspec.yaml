@@ -5,7 +5,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 # nm /Users/izinin/Projects/radio_amoris/build/ios/iphoneos/Runner.app/Frameworks/Flutter.framework/Flutter | grep ptrace
-version: 0.1.1+15
+version: 0.1.1+19
 
 dependencies:
   flutter:
