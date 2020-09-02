@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
     return new ScopedModel<AmorisModel>(
         model: new AmorisModel(),
         child: new MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Radio Amoris',
             theme: new ThemeData(
               primarySwatch: Colors.blue,
