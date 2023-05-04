@@ -5,9 +5,9 @@ gradle-wrapper.jar
 /gradlew.bat
 /local.properties
 GeneratedPluginRegistrant.java
-*.iml
-*.class
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
+
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app
+key.properties
+**/*.keystore
+**/*.jks
