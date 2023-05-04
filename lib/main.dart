@@ -1,115 +1,184 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'features/playerctl/playerctl_page.dart';
+import 'features/stations/stations_page.dart';
+import 'navigation_rail_section.dart';
+import 'appdata.dart';
+import 'features/favoritelist/index.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  var settings = await Hive.openBox(PlayerSingleton.settingsBoxName);
+  GetIt.I.registerSingleton<AppData>(AppData());
+  GetIt.I.registerFactoryAsync<PlayerSingleton>(PlayerSingleton.instance);
+  runApp(AppUI(settings));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AppUI extends StatefulWidget {
+  final Box _settings;
+  const AppUI(this._settings, {Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<AppUI> createState() => _AppUIState();
+}
+
+class _AppUIState extends State<AppUI> {
+  late bool useLightMode;
+  int colorSelected = 0;
+  int screenIndex = 0;
+  final PageController controller = PageController();
+
+  late ThemeData themeData;
+
+  @override
+  initState() {
+    super.initState();
+    useLightMode = widget._settings.get('useLightMode', defaultValue: false);
+    colorSelected = widget._settings.get('colorSelected', defaultValue: 0);
+    themeData = _updateThemes(colorSelected, useLightMode);
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<BottomNavigationBarItem> bottombarItems =
+        appBarDestinations.map((e) => BottomNavigationBarItem(icon: e.icon, activeIcon: e.selectedIcon, label: e.label)).toList();
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      title: apptitle,
+      themeMode: useLightMode ? ThemeMode.light : ThemeMode.dark,
+      theme: themeData,
+      home: LayoutBuilder(builder: (context, constraints) {
+        if (constraints.maxWidth < narrowScreenWidthThreshold) {
+          return Scaffold(
+            appBar: createAppBar(),
+            body: PageView(
+              controller: controller,
+              children: tabPages,
+              onPageChanged: (index) {
+                setState(() {
+                  screenIndex = index;
+                });
+              },
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: screenIndex,
+              onTap: (index) {
+                controller.jumpToPage(index);
+                setState(() {
+                  screenIndex = index;
+                });
+              },
+              items: bottombarItems,
+            ),
+          );
+        } else {
+          return Scaffold(
+            appBar: createAppBar(),
+            body: SafeArea(
+              bottom: false,
+              top: false,
+              child: Row(
+                children: <Widget>[
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: NavigationRailSection(
+                          onSelectItem: (index) {
+                            controller.jumpToPage(index);
+                            setState(() {
+                              screenIndex = index;
+                            });
+                          },
+                          selectedIndex: screenIndex)),
+
+                  const VerticalDivider(thickness: 1, width: 1),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 70,
+                    child: PageView(
+                      controller: controller,
+                      children: const [
+                        StationsPage(),
+                        PlayerctlPage(),
+                      ],
+                      onPageChanged: (index) {
+                        setState(() {
+                          screenIndex = index;
+                        });
+                      },
+                    ),
+                  ),
+                  // createScreenFor(screenIndex, true),
+                ],
+              ),
+            ),
+          );
+        }
+      }),
     );
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  ThemeData _updateThemes(int colorIndex, bool useLightMode) {
+    return ThemeData(colorSchemeSeed: colorOptions[colorSelected], useMaterial3: true, brightness: useLightMode ? Brightness.light : Brightness.dark);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+  PreferredSizeWidget createAppBar() {
+    return AppBar(
+      title: const Text(apptitle),
+      actions: [
+        ValueListenableBuilder<Box>(
+            valueListenable: Hive.box(PlayerSingleton.settingsBoxName).listenable(),
+            builder: (context, box, widget) {
+              useLightMode = box.get('useLightMode', defaultValue: true);
+              return IconButton(
+                icon: useLightMode ? const Icon(Icons.dark_mode) : const Icon(Icons.wb_sunny),
+                onPressed: () {
+                  useLightMode = !useLightMode;
+                  box.put('useLightMode', useLightMode);
+                  setState(() {
+                    themeData = _updateThemes(colorSelected, useLightMode);
+                  });
+                },
+                tooltip: "Toggle dark mode",
+              );
+            }),
+        PopupMenuButton(
+          icon: const Icon(Icons.more_vert),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          itemBuilder: (context) {
+            return List.generate(colorOptions.length, (index) {
+              return PopupMenuItem(
+                  value: index,
+                  child: Wrap(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Icon(
+                          index == colorSelected ? Icons.color_lens : Icons.color_lens_outlined,
+                          color: colorOptions[index],
+                        ),
+                      ),
+                      Padding(padding: const EdgeInsets.only(left: 20), child: Text(colorText[index]))
+                    ],
+                  ));
+            });
+          },
+          onSelected: (value) {
+            widget._settings.put('colorSelected', value);
+            setState(() {
+              colorSelected = value;
+              themeData = _updateThemes(colorSelected, useLightMode);
+            });
+          },
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ],
     );
   }
+
+  final tabPages = [
+    const StationsPage(),
+    const PlayerctlPage(),
+  ];
 }

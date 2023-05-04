@@ -40,14 +40,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   # project specific dependecies below
-  dio: ^4.0.6
+  dio: ^5.1.1
   xml_annotation: ^2.1.0
   json_annotation: ^4.7.0
   hive_flutter: ^1.1.0
   bloc: ^8.1.0
   flutter_bloc: ^8.1.1
   equatable: ^2.0.5
-  flutter_svg: ^1.1.6
+  flutter_svg: ^2.0.5
   get_it: ^7.2.0
   cached_network_image: ^3.2.2
   rxdart: ^0.27.7
