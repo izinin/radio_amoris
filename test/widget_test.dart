@@ -8,9 +8,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:radio_amoris/appdata.dart';
+import 'package:radioamoris/appdata.dart';
 
-import 'package:radio_amoris/main.dart';
+import 'package:radioamoris/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

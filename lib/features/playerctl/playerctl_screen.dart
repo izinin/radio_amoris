@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:radio_amoris/features/playerctl/index.dart';
-import 'package:radio_amoris/shared/model/mem_station.dart';
+import 'package:radioamoris/features/playerctl/index.dart';
+import 'package:radioamoris/shared/model/mem_station.dart';
 
 import '../../appdata.dart';
 
@@ -109,7 +109,7 @@ class PlayerctlScreenState extends State<PlayerctlScreen> {
     }
     if (url.isEmpty) {
       return (station.logo != null && station.logo!.isNotEmpty)
-          ? CachedNetworkImage(imageUrl: station.logo?? '')
+          ? CachedNetworkImage(imageUrl: station.logo ?? '')
           : SvgPicture.asset(
               (station.assetlogo == 'art/sun-60.png') ? 'art/sun.svg' : 'art/moon.svg',
               width: svgWidth,

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zindolla.radio_amoris">
+    package="com.zindolla.radioamoris">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -10,7 +10,7 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 
    <application
-        android:label="radio_amoris"
+        android:label="radioamoris"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

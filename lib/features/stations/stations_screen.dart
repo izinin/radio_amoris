@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:radio_amoris/appdata.dart';
-import 'package:radio_amoris/features/stations/index.dart';
+import 'package:radioamoris/appdata.dart';
+import 'package:radioamoris/features/stations/index.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../shared/model/mem_station.dart';
 import '../playerctl/audio_player_ctl_btn.dart';

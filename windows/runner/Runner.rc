@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.zindolla" "\0"
-            VALUE "FileDescription", "radio_amoris" "\0"
+            VALUE "FileDescription", "radioamoris" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "radio_amoris" "\0"
+            VALUE "InternalName", "radioamoris" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.zindolla. All rights reserved." "\0"
-            VALUE "OriginalFilename", "radio_amoris.exe" "\0"
-            VALUE "ProductName", "radio_amoris" "\0"
+            VALUE "OriginalFilename", "radioamoris.exe" "\0"
+            VALUE "ProductName", "radioamoris" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

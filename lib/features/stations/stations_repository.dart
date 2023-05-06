@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
-import 'package:radio_amoris/features/stations/index.dart';
+import 'package:radioamoris/features/stations/index.dart';
 
 import '../../appdata.dart';
 import '../../shared/model/mem_station.dart';

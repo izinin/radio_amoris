@@ -1,6 +1,6 @@
 {
-    "name": "radio_amoris",
-    "short_name": "radio_amoris",
+    "name": "radioamoris",
+    "short_name": "radioamoris",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

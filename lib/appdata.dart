@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:radio_amoris/shared/model/mem_station.dart';
+import 'package:radioamoris/shared/model/mem_station.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'features/stations/stations_repository.dart';

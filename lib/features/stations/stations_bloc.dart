@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
 
 import 'package:bloc/bloc.dart';
-import 'package:radio_amoris/features/stations/index.dart';
+import 'package:radioamoris/features/stations/index.dart';
 
 class StationsBloc extends Bloc<StationsEvent, StationsState> {
   final _repository = StationsRepository();

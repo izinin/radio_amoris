@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:get_it/get_it.dart';
-import 'package:radio_amoris/features/stations/index.dart';
+import 'package:radioamoris/features/stations/index.dart';
 import 'package:meta/meta.dart';
 
 import '../../appdata.dart';

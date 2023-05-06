@@ -1,4 +1,4 @@
-package com.zindolla.radio_amoris;
+package com.zindolla.radioamoris;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

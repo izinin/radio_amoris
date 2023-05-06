@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:radio_amoris/features/stations/index.dart';
+import 'package:radioamoris/features/stations/index.dart';
 
 class StationsPage extends StatefulWidget {
   static const String routeName = '/stations';
