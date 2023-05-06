@@ -11,3 +11,4 @@ GeneratedPluginRegistrant.java
 /.idea/libraries
 .DS_Store
 /build
+.idea/
