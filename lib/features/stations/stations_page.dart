@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myradio/features/stations/index.dart';
+import 'package:radio_amoris/features/stations/index.dart';
 
 class StationsPage extends StatefulWidget {
   static const String routeName = '/stations';
@@ -10,8 +10,7 @@ class StationsPage extends StatefulWidget {
   StationsPageState createState() => StationsPageState();
 }
 
-class StationsPageState extends State<StationsPage>
-    with AutomaticKeepAliveClientMixin {
+class StationsPageState extends State<StationsPage> with AutomaticKeepAliveClientMixin {
   final _stationsBloc = StationsBloc(const InitialState());
 
   @override

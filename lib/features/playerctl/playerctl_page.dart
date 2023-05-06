@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myradio/features/playerctl/index.dart';
+import 'package:radio_amoris/features/playerctl/index.dart';
 
 class PlayerctlPage extends StatefulWidget {
   static const String routeName = '/playerctl';

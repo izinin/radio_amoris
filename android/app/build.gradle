@@ -35,7 +35,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.zindolla.radio_amoris"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
@@ -43,6 +42,8 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        // https://developer.android.com/studio/build/multidex
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -52,6 +53,16 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+}
+
+def mediaVersion = "1.0.0-alpha03"
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.google.android.material:material:1.8.0-alpha03'
+    implementation "androidx.media2:media2-session:1.2.1"
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation "androidx.media3:media3-exoplayer:$mediaVersion"
+    implementation "androidx.media3:media3-exoplayer-dash:$mediaVersion"
 }
 
 flutter {

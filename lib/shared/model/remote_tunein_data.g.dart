@@ -87,10 +87,6 @@ void _$TrackListBuildXmlElement(TrackList instance, XmlBuilder builder,
   });
 }
 
-TrackList _$TrackListFromXmlElement(XmlElement element) {
-  return TrackList();
-}
-
 List<XmlAttribute> _$TrackListToXmlAttributes(TrackList instance,
     {Map<String, String?> namespaces = const {}}) {
   final attributes = <XmlAttribute>[];

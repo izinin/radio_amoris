@@ -6,7 +6,6 @@ import 'features/playerctl/playerctl_page.dart';
 import 'features/stations/stations_page.dart';
 import 'navigation_rail_section.dart';
 import 'appdata.dart';
-import 'features/favoritelist/index.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

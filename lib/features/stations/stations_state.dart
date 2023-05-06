@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:myradio/appdata.dart';
+import 'package:radio_amoris/appdata.dart';
 
 import '../../shared/model/mem_station.dart';
 

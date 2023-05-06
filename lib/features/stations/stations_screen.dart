@@ -2,10 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:myradio/appdata.dart';
-import 'package:myradio/features/favoritelist/model/favorite_station.dart';
-import 'package:myradio/features/stations/index.dart';
+import 'package:radio_amoris/appdata.dart';
+import 'package:radio_amoris/features/stations/index.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../shared/model/mem_station.dart';
 import '../playerctl/audio_player_ctl_btn.dart';
@@ -29,34 +27,10 @@ class StationsScreenState extends State<StationsScreen> {
   PlayerSingleton? _playerCtl;
   StationsScreenState();
 
-  BannerAd? _ad;
-
   @override
   void initState() {
     super.initState();
-    BannerAd(
-      adUnitId: AppData.bannerAdUnitId(AdBannerPosition.top500),
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          setState(() {
-            _ad = ad as BannerAd;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          // Releases an ad resource when it fails to load
-          ad.dispose();
-        },
-      ),
-    ).load();
     widget._stationsBloc.add(InitAppDataEvent());
-  }
-
-  @override
-  void dispose() {
-    _ad?.dispose();
-    super.dispose();
   }
 
   @override
@@ -94,16 +68,6 @@ class StationsScreenState extends State<StationsScreen> {
             double adWidth = min(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
             return Column(
               children: [
-                Container(
-                  width: _ad == null ? adWidth : _ad!.size.width.toDouble(),
-                  height: 72.0,
-                  alignment: Alignment.center,
-                  child: _ad == null
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : AdWidget(ad: _ad!),
-                ),
                 Expanded(
                     child: ListView.builder(
                   itemBuilder: (context, i) {
@@ -157,7 +121,7 @@ class StationsScreenState extends State<StationsScreen> {
     if (station == null) {
       return const SizedBox(width: 50, height: 50);
     }
-    return ValueListenableBuilder<FavoriteStation?>(
+    return ValueListenableBuilder<MemStation?>(
         builder: (context, value, child) {
           return (station.id == value?.id && _playerCtl != null) ? AudioPlayerCtlBtn(_playerCtl!, 32.0) : const SizedBox(width: 50, height: 50);
         },

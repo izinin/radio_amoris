@@ -7,13 +7,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:radio_amoris/appdata.dart';
 
 import 'package:radio_amoris/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await Hive.initFlutter();
+    var settings = await Hive.openBox(PlayerSingleton.settingsBoxName);
+    await tester.pumpWidget(AppUI(settings));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

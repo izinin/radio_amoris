@@ -1,5 +1,3 @@
-import 'package:myradio/features/favoritelist/model/favorite_station.dart';
-
 import 'remote_tunein_data.dart';
 
 enum TuneState { init, resolved, invalid }
@@ -39,9 +37,5 @@ class MemStation {
   @override
   int get hashCode {
     return id.hashCode ^ name.hashCode ^ logo.hashCode ^ tunein.hashCode ^ url.hashCode ^ assetlogo.hashCode;
-  }
-
-  FavoriteStation toFavoriteStation() {
-    return FavoriteStation(id: id, name: name, logo: logo ?? '', url: url, assetlogo: assetlogo);
   }
 }

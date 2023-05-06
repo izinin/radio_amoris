@@ -25,3 +25,8 @@ For help getting started with Flutter, check
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## How to build
+
+* the project uses codegenerator `build_runner`
+* to generate class supporting code, use command: `flutter pub run build_runner build --delete-conflicting-outputs`

@@ -40,7 +40,7 @@ class AppData {
     return url == 'art/sun-60.png' ? 'art/sun.svg' : 'art/moon.svg';
   }
 
-  static var currentTune = ValueNotifier<FavoriteStation?>(null);
+  static var currentTune = ValueNotifier<MemStation?>(null);
   static var currentTuneBookmarked = false;
   static var currentTuneMeta = ValueNotifier<Map<String, String>?>(null);
 
@@ -110,7 +110,6 @@ class PlayerSingleton {
   // private constructor
   PlayerSingleton._internal();
 
-  static String get favBoxName => 'favorites';
   static String get settingsBoxName => 'settings';
   Stream<MyradioPlayingState> get getPlayerStateStream => _playerStatecontroller.stream;
 
@@ -120,9 +119,6 @@ class PlayerSingleton {
       return _singleton;
     }
     once = false;
-
-    Hive.registerAdapter(FavoriteStationAdapter());
-    _favorites = await Hive.openBox(favBoxName);
 
     await _getImageFileFromAssets('art/moon-60.png');
     await _getImageFileFromAssets('art/sun-60.png');
@@ -172,23 +168,10 @@ class PlayerSingleton {
       _startPlayerStateListener();
       _startNowPlayingListener();
       _startPlaylistCtrlListener();
-      AppData.currentTune.value = tune.toFavoriteStation();
+      AppData.currentTune.value = tune;
       AppData.currentTuneBookmarked = false;
     } on PlatformException catch (e) {
-      _playerErrors.add('exoPlayerStart error: '${e.message}'');
-    }
-  }
-
-  Future<void> exoPlayerStartFav(FavoriteStation tune) async {
-    try {
-      await _platform.invokeMethod('exoPlayerStart', {'id': tune.id, 'url': tune.url, 'name': tune.name, 'logo': tune.logo, 'assetLogo': tune.assetlogo});
-      _startPlayerStateListener();
-      _startNowPlayingListener();
-      _startPlaylistCtrlListener();
-      AppData.currentTune.value = tune;
-      AppData.currentTuneBookmarked = true;
-    } on PlatformException catch (e) {
-      _playerErrors.add('exoPlayerStartFav error: '${e.message}'');
+      _playerErrors.add("exoPlayerStart error: '${e.message}'");
     }
   }
 
@@ -196,7 +179,7 @@ class PlayerSingleton {
     try {
       await _platform.invokeMethod('exoPlayerResume');
     } on PlatformException catch (e) {
-      _playerErrors.add('exoPlayerResume error: '${e.message}'');
+      _playerErrors.add("exoPlayerResume error: '${e.message}'");
     }
   }
 
@@ -204,20 +187,8 @@ class PlayerSingleton {
     try {
       await _platform.invokeMethod('exoPlayerPause');
     } on PlatformException catch (e) {
-      _playerErrors.add('exoPlayerPause error: '${e.message}'');
+      _playerErrors.add("exoPlayerPause error: '${e.message}'");
     }
-  }
-
-  Future<void> removeBookmark(FavoriteStation station) {
-    MemStation mem = AppData.inMemoryStations.where((e) => e.id == station.id).first;
-    mem.isBookmarked = false;
-    return _favorites.delete(station.id);
-  }
-
-  Future<void> addBookmark(FavoriteStation station) {
-    MemStation mem = AppData.inMemoryStations.where((e) => e.id == station.id).first;
-    mem.isBookmarked = true;
-    return _favorites.put(station.id, station);
   }
 
   void _startPlayerStateListener() {
@@ -268,19 +239,14 @@ class PlayerSingleton {
       return;
     }
     final isForward = raw as bool;
-    if (Hive.box(PlayerSingleton.favBoxName).length > 1) {
-      // use favorites
-      _playNextItem(false, tuneId, isForward, Hive.box(PlayerSingleton.favBoxName).values.toList());
-    } else {
-      _playNextItem(true, tuneId, isForward, AppData.inMemoryStations);
-    }
+    _playNextItem(tuneId, isForward, AppData.inMemoryStations);
   }
 
-  void _playNextItem<T>(bool ismem, int tuneId, bool isForward, List<T> stations) {
-    T? nextTune;
+  void _playNextItem(int tuneId, bool isForward, List<MemStation> stations) {
+    MemStation? nextTune;
     for (var i = 0; i < stations.length; i++) {
-      T station = stations[i];
-      if ((ismem && (station as MemStation).id == tuneId) || (!ismem && (station as FavoriteStation).id == tuneId)) {
+      MemStation station = stations[i];
+      if (station.id == tuneId) {
         if (isForward) {
           nextTune = (i == stations.length - 1) ? stations[0] : stations[i + 1];
         } else {
@@ -292,11 +258,7 @@ class PlayerSingleton {
     if (nextTune == null) {
       return;
     }
-    if (ismem) {
-      exoPlayerStart(nextTune as MemStation);
-    } else {
-      exoPlayerStartFav(nextTune as FavoriteStation);
-    }
+    exoPlayerStart(nextTune);
   }
 }
 
