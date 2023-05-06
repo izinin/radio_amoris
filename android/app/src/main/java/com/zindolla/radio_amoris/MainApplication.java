@@ -1,12 +1,11 @@
-package com.zindolla.myradio;
+package com.zindolla.radio_amoris;
 
-import android.app.Application;
+import static android.app.NotificationManager.IMPORTANCE_LOW;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 import android.util.Log;
-
-import static android.app.NotificationManager.IMPORTANCE_LOW;
 
 public class MainApplication extends io.flutter.app.FlutterApplication {
     public static final String CHANNEL_ID = "myRadioServiceChannel";

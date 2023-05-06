@@ -1,4 +1,4 @@
-package com.zindolla.myradio;
+package com.zindolla.radio_amoris;
 
 import android.os.Parcel;
 import android.os.Parcelable;

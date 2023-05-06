@@ -1,4 +1,4 @@
-package com.zindolla.myradio;
+package com.zindolla.radio_amoris;
 
 public enum MyPlayerCommand {
     IDLE,

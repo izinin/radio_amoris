@@ -1,4 +1,4 @@
-package com.zindolla.myradio;
+package com.zindolla.radio_amoris;
 
 import android.content.Context;
 import android.content.Intent;

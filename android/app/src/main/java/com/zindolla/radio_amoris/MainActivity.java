@@ -1,4 +1,4 @@
-package com.zindolla.myradio;
+package com.zindolla.radio_amoris;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -16,8 +16,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.media3.exoplayer.ExoPlayer;
 
 import com.google.common.collect.ImmutableMap;
-
-import java.util.Objects;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;

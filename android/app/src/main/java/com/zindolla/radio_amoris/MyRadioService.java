@@ -1,12 +1,12 @@
-package com.zindolla.myradio;
+package com.zindolla.radio_amoris;
 
 import static androidx.media3.common.C.WAKE_MODE_NETWORK;
-import static com.zindolla.myradio.MainActivity.TOSERVICE_TUNE_ASSETLOGO;
-import static com.zindolla.myradio.MainActivity.TOSERVICE_TUNE_ID;
-import static com.zindolla.myradio.MainActivity.TOSERVICE_TUNE_LOGO;
-import static com.zindolla.myradio.MainActivity.TOSERVICE_TUNE_NAME;
-import static com.zindolla.myradio.MainActivity.TOSERVICE_TUNE_URL;
-import static com.zindolla.myradio.MainApplication.CHANNEL_ID;
+import static com.zindolla.radio_amoris.MainActivity.TOSERVICE_TUNE_ASSETLOGO;
+import static com.zindolla.radio_amoris.MainActivity.TOSERVICE_TUNE_ID;
+import static com.zindolla.radio_amoris.MainActivity.TOSERVICE_TUNE_LOGO;
+import static com.zindolla.radio_amoris.MainActivity.TOSERVICE_TUNE_NAME;
+import static com.zindolla.radio_amoris.MainActivity.TOSERVICE_TUNE_URL;
+import static com.zindolla.radio_amoris.MainApplication.CHANNEL_ID;
 
 import android.app.Activity;
 import android.app.PendingIntent;
