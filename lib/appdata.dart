@@ -8,15 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:radioamoris/shared/model/mem_station.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'features/stations/stations_repository.dart';
-
-enum AdBannerPosition { top500, favorites, player }
-
 class AppData {
-  static const _isAdTesting = false;
-  static const _adTestingUidAndroid = 'ca-app-pub-3940256099942544/6300978111';
-  static const _adTestingUidIOS = 'ca-app-pub-3940256099942544/2934735716';
-
   // singleton
   static final AppData _appData = AppData._internal();
   static bool _isSun = false;
@@ -41,25 +33,7 @@ class AppData {
   }
 
   static var currentTune = ValueNotifier<MemStation?>(null);
-  static var currentTuneBookmarked = false;
   static var currentTuneMeta = ValueNotifier<Map<String, String>?>(null);
-
-  static String bannerAdUnitId(AdBannerPosition pos) {
-    if (Platform.isAndroid) {
-      switch (pos) {
-        case AdBannerPosition.top500:
-          return _isAdTesting ? _adTestingUidAndroid : 'ca-app-pub-7813727378177845/4857043224';
-        case AdBannerPosition.favorites:
-          return _isAdTesting ? _adTestingUidAndroid : 'ca-app-pub-7813727378177845/2367692826';
-        case AdBannerPosition.player:
-          return _isAdTesting ? _adTestingUidAndroid : 'ca-app-pub-7813727378177845/7108883618';
-      }
-    } else if (Platform.isIOS) {
-      return _isAdTesting ? _adTestingUidIOS : '<YOUR_IOS_BANNER_AD_UNIT_ID>';
-    } else {
-      throw UnsupportedError('Unsupported platform');
-    }
-  }
 }
 
 enum MyradioProcessingState {
@@ -139,37 +113,13 @@ class PlayerSingleton {
     return 'content:/$filePath';
   }
 
-  bool isTuneValid(MemStation tune) {
-    final isValid = (tune.tuneinData?.container?.trackList != null && tune.tuneinData?.container?.trackList![0].location != null);
-    if (!isValid || tune.state == TuneState.invalid) {
-      return false;
-    }
-    return true;
-  }
-
   Future<void> exoPlayerStart(MemStation tune) async {
-    if (!isTuneValid(tune)) {
-      return;
-    }
-
-    if (tune.state == TuneState.init) {
-      final repository = StationsRepository();
-      repository.fillTuneData(tune);
-      if (!isTuneValid(tune)) {
-        return;
-      }
-    }
-
-    if (tune.url.isEmpty) {
-      tune.url = tune.tuneinData!.container!.trackList![0].location!;
-    }
     try {
-      await _platform.invokeMethod('exoPlayerStart', {'id': tune.id, 'url': tune.url, 'name': tune.name, 'logo': tune.logo, 'assetLogo': tune.assetlogo});
+      await _platform.invokeMethod('exoPlayerStart', {'id': tune.id, 'url': tune.listenurl, 'name': tune.name, 'logo': tune.logo, 'assetLogo': tune.assetlogo});
       _startPlayerStateListener();
       _startNowPlayingListener();
       _startPlaylistCtrlListener();
       AppData.currentTune.value = tune;
-      AppData.currentTuneBookmarked = false;
     } on PlatformException catch (e) {
       _playerErrors.add("exoPlayerStart error: '${e.message}'");
     }

@@ -1,121 +1,37 @@
-// To parse this JSON data, do
-//
-//     final randomStationsModel = randomStationsModelFromJson(jsonString);
-
 import 'dart:convert';
 
-RemoteStationsModel randomStationsModelFromJson(String str) =>
-    RemoteStationsModel.fromJson(json.decode(str));
+//			"name": "Drum and Bass (160 kbps)",
+//			"listenurl": "https://amoris.sknt.ru/dnb.mp3",
+//			"metadata": "https://amoris.sknt.ru/dnb/stats.json"
+
+RemoteStationsModel randomStationsModelFromJson(String str) => RemoteStationsModel.fromJson(json.decode(str));
 
 class RemoteStationsModel {
   RemoteStationsModel({
-    required this.response,
+    required this.channels,
   });
 
-  Response response;
+  List<ChannelDescriptor> channels;
 
-  factory RemoteStationsModel.fromJson(Map<String, dynamic> json) =>
-      RemoteStationsModel(
-        response: Response.fromJson(json["response"]),
+  factory RemoteStationsModel.fromJson(Map<String, dynamic> json) => RemoteStationsModel(
+        channels: (json["channels"] as List<dynamic>).map((e) => ChannelDescriptor.fromJson(e)).toList(),
       );
 }
 
-class Response {
-  Response({
-    required this.data,
-    required this.statusText,
-    required this.statusCode,
-  });
-
-  Data data;
-  String statusText;
-  int statusCode;
-
-  factory Response.fromJson(Map<String, dynamic> json) => Response(
-        data: Data.fromJson(json["data"]),
-        statusText: json["statusText"],
-        statusCode: json["statusCode"],
-      );
-}
-
-class Data {
-  Data({
-    required this.stationlist,
-  });
-
-  Stationlist stationlist;
-
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-        stationlist: Stationlist.fromJson(json["stationlist"]),
-      );
-}
-
-class Stationlist {
-  Stationlist({
-    this.station,
-    required this.tunein,
-  });
-
-  List<Station>? station;
-  Tunein tunein;
-
-  factory Stationlist.fromJson(Map<String, dynamic> json) => Stationlist(
-        station:
-            List<Station>.from(json["station"].map((x) => Station.fromJson(x))),
-        tunein: Tunein.fromJson(json["tunein"]),
-      );
-}
-
-class Station {
-  Station({
-    required this.id,
+class ChannelDescriptor {
+  ChannelDescriptor({
     required this.name,
-    this.br,
-    this.ct,
-    this.mt,
-    this.lc,
-    this.genre,
-    this.logo,
-    this.ml,
+    required this.listenurl,
+    required this.metadata,
   });
 
-  int id;
   String name;
-  int? br;
-  String? ct;
-  String? mt;
-  int? lc;
-  String? genre;
-  String? logo;
-  int? ml;
+  String listenurl;
+  String metadata;
 
-  factory Station.fromJson(Map<String, dynamic> json) => Station(
-        br: json["br"],
-        ct: json["ct"],
-        mt: json["mt"],
-        lc: json["lc"],
+  factory ChannelDescriptor.fromJson(Map<String, dynamic> json) => ChannelDescriptor(
         name: json["name"],
-        genre: json["genre"],
-        logo: json["logo"],
-        id: json["id"],
-        ml: json["ml"],
-      );
-}
-
-class Tunein {
-  Tunein({
-    required this.baseM3U,
-    required this.baseXspf,
-    required this.base,
-  });
-
-  String baseM3U;
-  String baseXspf;
-  String base;
-
-  factory Tunein.fromJson(Map<String, dynamic> json) => Tunein(
-        baseM3U: json["base-m3u"],
-        baseXspf: json["base-xspf"],
-        base: json["base"],
+        listenurl: json["listenurl"],
+        metadata: json["metadata"],
       );
 }

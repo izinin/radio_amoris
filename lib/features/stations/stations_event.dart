@@ -28,7 +28,7 @@ class LoadStationsEvent extends StationsEvent {
   Stream<StationsState> applyAsync({StationsState? currentState, StationsBloc? bloc}) async* {
     try {
       if (AppData.inMemoryStations.isEmpty) {
-        await bloc?.repo.getTop500RemoteData(); //getRemoteData
+        await bloc?.repo.getRemoteData();
       }
       yield const LoadStationsState();
     } catch (_, stackTrace) {
@@ -44,14 +44,6 @@ class LoadTuneForStationEvent extends StationsEvent {
 
   @override
   Stream<StationsState> applyAsync({StationsState? currentState, StationsBloc? bloc}) async* {
-    if (_station.state == TuneState.invalid) {
-      yield ErrorPlayerState(_station);
-    }
-    if (_station.state != TuneState.resolved) {
-      await bloc?.repo.fillTuneData(_station);
-    }
-
-    if (_station.tuneinData?.container?.trackList != null && _station.tuneinData?.container?.trackList![0].location != null) {
       try {
         await StationsEvent._playerCtl!.exoPlayerStart(_station);
         yield PlayingStationState(_station);
@@ -60,6 +52,5 @@ class LoadTuneForStationEvent extends StationsEvent {
         _station.state = TuneState.invalid;
         yield ErrorPlayerState(_station);
       }
-    }
   }
 }
