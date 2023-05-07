@@ -1,18 +1,16 @@
-
 enum TuneState { init, resolved, invalid }
 
 class MemStation {
   final int id;
   final String name;
   final String listenurl;
+  final String metadataurl;
   StationMetadata? metadata;
-  final String logo;
-  final String assetlogo;
 
   var state = TuneState.init;
   var errorMessage = '';
 
-  MemStation({required this.id, required this.name, required this.listenurl, required this.logo, required this.assetlogo});
+  MemStation({required this.id, required this.name, required this.listenurl, required this.metadataurl});
 
   @override
   bool operator ==(Object other) {
@@ -27,4 +25,8 @@ class MemStation {
   }
 }
 
-class StationMetadata {}
+class StationMetadata {
+  final int uniquelisteners;
+  final String songtitle;
+  StationMetadata(this.uniquelisteners, this.songtitle);
+}

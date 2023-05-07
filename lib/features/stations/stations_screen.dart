@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:radioamoris/appdata.dart';
 import 'package:radioamoris/features/stations/index.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../shared/model/mem_station.dart';
-import '../playerctl/audio_player_ctl_btn.dart';
+import '../../shared/model/audio_player_ctl_btn.dart';
 
 class StationsScreen extends StatefulWidget {
   const StationsScreen({
@@ -65,7 +62,6 @@ class StationsScreenState extends State<StationsScreen> {
             );
           }
           if (currentState is LoadStationsState || currentState is PlayingStationState || currentState is ErrorPlayerState) {
-            double adWidth = min(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
             return Column(
               children: [
                 Expanded(
@@ -94,14 +90,6 @@ class StationsScreenState extends State<StationsScreen> {
   Widget _buildRow(int idx, StationsState state) {
     MemStation? station = widget._stationsBloc.repo.data?.elementAt(idx);
     return ListTile(
-      leading: (station == null)
-          ? Container()
-          : (station.logo != null && station.logo!.isNotEmpty)
-              ? CachedNetworkImage(
-                  imageUrl: station.logo!,
-                  placeholder: (context, url) => Image.asset(station.assetlogo),
-                  errorWidget: (context, url, error) => Image.asset(station.assetlogo))
-              : Image.asset(station.assetlogo),
       title: Text(station?.name ?? "no name"),
       onTap: () {
         if (station == null) {

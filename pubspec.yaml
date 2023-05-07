@@ -79,10 +79,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - art/sun-60.png
-    - art/moon-60.png
-    - art/sun.svg
-    - art/moon.svg
+    - art/lockscr_x1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'features/playerctl/playerctl_page.dart';
 import 'features/stations/stations_page.dart';
-import 'navigation_rail_section.dart';
 import 'appdata.dart';
 
 Future<void> main() async {
@@ -28,7 +26,6 @@ class AppUI extends StatefulWidget {
 class _AppUIState extends State<AppUI> {
   late bool useLightMode;
   int colorSelected = 0;
-  int screenIndex = 0;
   final PageController controller = PageController();
 
   late ThemeData themeData;
@@ -43,78 +40,16 @@ class _AppUIState extends State<AppUI> {
 
   @override
   Widget build(BuildContext context) {
-    List<BottomNavigationBarItem> bottombarItems =
-        appBarDestinations.map((e) => BottomNavigationBarItem(icon: e.icon, activeIcon: e.selectedIcon, label: e.label)).toList();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: apptitle,
       themeMode: useLightMode ? ThemeMode.light : ThemeMode.dark,
       theme: themeData,
       home: LayoutBuilder(builder: (context, constraints) {
-        if (constraints.maxWidth < narrowScreenWidthThreshold) {
-          return Scaffold(
-            appBar: createAppBar(),
-            body: PageView(
-              controller: controller,
-              children: tabPages,
-              onPageChanged: (index) {
-                setState(() {
-                  screenIndex = index;
-                });
-              },
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: screenIndex,
-              onTap: (index) {
-                controller.jumpToPage(index);
-                setState(() {
-                  screenIndex = index;
-                });
-              },
-              items: bottombarItems,
-            ),
-          );
-        } else {
-          return Scaffold(
-            appBar: createAppBar(),
-            body: SafeArea(
-              bottom: false,
-              top: false,
-              child: Row(
-                children: <Widget>[
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: NavigationRailSection(
-                          onSelectItem: (index) {
-                            controller.jumpToPage(index);
-                            setState(() {
-                              screenIndex = index;
-                            });
-                          },
-                          selectedIndex: screenIndex)),
-
-                  const VerticalDivider(thickness: 1, width: 1),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width - 70,
-                    child: PageView(
-                      controller: controller,
-                      children: const [
-                        StationsPage(),
-                        PlayerctlPage(),
-                      ],
-                      onPageChanged: (index) {
-                        setState(() {
-                          screenIndex = index;
-                        });
-                      },
-                    ),
-                  ),
-                  // createScreenFor(screenIndex, true),
-                ],
-              ),
-            ),
-          );
-        }
+        return Scaffold(
+          appBar: createAppBar(),
+          body: const StationsPage(),
+        );
       }),
     );
   }
@@ -175,9 +110,4 @@ class _AppUIState extends State<AppUI> {
       ],
     );
   }
-
-  final tabPages = [
-    const StationsPage(),
-    const PlayerctlPage(),
-  ];
 }

@@ -30,10 +30,10 @@ public class MainActivity extends FlutterActivity {
     public static final String TOSERVICE_TUNE_URL = "tune.url";
     public static final String TOSERVICE_TUNE_LOGO = "tune.logo";
     public static final String TOSERVICE_TUNE_ASSETLOGO = "tune.asset.logo";
-    private static final String PLAYER_CMD_METHOD_CHANNEL = "com.zindolla.myradio/audio";
-    private static final String PLAYER_STATE_STREAM_CHANNEL = "com.zindolla.myradio/player-state";
-    private static final String CURR_PLAYING_STREAM_CHANNEL = "com.zindolla.myradio/currently-playing";
-    private static final String PLAYLIST_CTRL_STREAM_CHANNEL = "com.zindolla.myradio/playlist-ctrl";
+    private static final String PLAYER_CMD_METHOD_CHANNEL = "com.zindolla.radioamoris/audio";
+    private static final String PLAYER_STATE_STREAM_CHANNEL = "com.zindolla.radioamoris/player-state";
+    private static final String CURR_PLAYING_STREAM_CHANNEL = "com.zindolla.radioamoris/currently-playing";
+    private static final String PLAYLIST_CTRL_STREAM_CHANNEL = "com.zindolla.radioamoris/playlist-ctrl";
 
     public final static String LOGTAG = MainActivity.class.getSimpleName();
 
@@ -43,9 +43,9 @@ public class MainActivity extends FlutterActivity {
     public static EventChannel.EventSink currentlyPlayingEvent;
     public static EventChannel.EventSink playlistCtrlEvent;
 
-    public static final String PLAYER_STATE_LISTENER = "com.zindolla.myradio.PLAYER_STATE";
-    public static final String CURRENTLY_PLAYING = "com.zindolla.myradio.CURRENTLY_PLAYING";
-    public static final String PLAYLIST_CTRL = "com.zindolla.myradio.PLAYLIST_CTRL";
+    public static final String PLAYER_STATE_LISTENER = "com.zindolla.radioamoris.PLAYER_STATE";
+    public static final String CURRENTLY_PLAYING = "com.zindolla.radioamoris.CURRENTLY_PLAYING";
+    public static final String PLAYLIST_CTRL = "com.zindolla.radioamoris.PLAYLIST_CTRL";
 
     private BroadcastReceiver playerStateListener = new BroadcastReceiver() {
         @Override

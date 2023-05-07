@@ -7,12 +7,22 @@ import android.app.NotificationManager;
 import android.os.Build;
 import android.util.Log;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 public class MainApplication extends io.flutter.app.FlutterApplication {
     public static final String CHANNEL_ID = "myRadioServiceChannel";
 
     @Override
     public void onCreate() {
         super.onCreate();
+        // disabling SSL host verification in ExoPlayer
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        });
 
         createNotificationChannel();
     }

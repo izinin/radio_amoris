@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:radioamoris/shared/model/mem_station.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -63,16 +60,14 @@ class PlayerSingleton {
   // singleton
   static final PlayerSingleton _singleton = PlayerSingleton._internal();
 
-  static late Box _favorites;
-
   factory PlayerSingleton() => _singleton;
 
   static bool once = true;
 
-  static const _platform = MethodChannel('com.zindolla.myradio/audio');
-  static const EventChannel _playerStateStream = EventChannel('com.zindolla.myradio/player-state');
-  static const EventChannel _currPlayingStream = EventChannel('com.zindolla.myradio/currently-playing');
-  static const EventChannel _playlistCtrlStream = EventChannel('com.zindolla.myradio/playlist-ctrl');
+  static const _platform = MethodChannel('com.zindolla.radioamoris/audio');
+  static const EventChannel _playerStateStream = EventChannel('com.zindolla.radioamoris/player-state');
+  static const EventChannel _currPlayingStream = EventChannel('com.zindolla.radioamoris/currently-playing');
+  static const EventChannel _playlistCtrlStream = EventChannel('com.zindolla.radioamoris/playlist-ctrl');
   static StreamSubscription? _playerStateStreamSubscr;
   static StreamSubscription? _currPlayingStreamSubscr;
   static StreamSubscription? _playlistCtrlStreamSubscr;
@@ -93,29 +88,13 @@ class PlayerSingleton {
       return _singleton;
     }
     once = false;
-
-    await _getImageFileFromAssets('art/moon-60.png');
-    await _getImageFileFromAssets('art/sun-60.png');
     return _singleton;
-  }
-
-  static Future<String> _getImageFileFromAssets(String resource) async {
-    final byteData = await rootBundle.load(resource);
-    final buffer = byteData.buffer;
-    Directory appDir = await getApplicationSupportDirectory(); // getTemporaryDirectory();
-    final resourceArr = resource.split('/');
-    final filePath = '${appDir.path}/${resourceArr[resourceArr.length - 1]}';
-    var file = File(filePath);
-    final existing = await file.exists();
-    if (!existing) {
-      file.writeAsBytes(buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    }
-    return 'content:/$filePath';
   }
 
   Future<void> exoPlayerStart(MemStation tune) async {
     try {
-      await _platform.invokeMethod('exoPlayerStart', {'id': tune.id, 'url': tune.listenurl, 'name': tune.name, 'logo': tune.logo, 'assetLogo': tune.assetlogo});
+      await _platform
+          .invokeMethod('exoPlayerStart', {'id': tune.id, 'url': tune.listenurl, 'name': tune.name, 'logo': null, 'assetLogo': 'art/lockscr_x1.png'});
       _startPlayerStateListener();
       _startNowPlayingListener();
       _startPlaylistCtrlListener();
@@ -145,24 +124,12 @@ class PlayerSingleton {
     _playerStateStreamSubscr = _playerStateStreamSubscr ?? _playerStateStream.receiveBroadcastStream().listen(_listenPlayerStateStream);
   }
 
-  void _cancelPlayerStateListener() {
-    _playerStateStreamSubscr?.cancel();
-  }
-
   void _startNowPlayingListener() {
     _currPlayingStreamSubscr = _currPlayingStreamSubscr ?? _currPlayingStream.receiveBroadcastStream().listen(_listenNowPlayingStream);
   }
 
-  void _cancelNowPlayingListener() {
-    _currPlayingStreamSubscr?.cancel();
-  }
-
   void _startPlaylistCtrlListener() {
     _playlistCtrlStreamSubscr = _playlistCtrlStreamSubscr ?? _playlistCtrlStream.receiveBroadcastStream().listen(_listenPlaylistCtrlStream);
-  }
-
-  void _cancelPlaylistCtrlListener() {
-    _playlistCtrlStreamSubscr?.cancel();
   }
 
   void _listenPlayerStateStream(raw) {
@@ -212,24 +179,8 @@ class PlayerSingleton {
   }
 }
 
-const List<NavigationDestination> appBarDestinations = [
-  NavigationDestination(
-    tooltip: '',
-    icon: Icon(Icons.playlist_play_rounded),
-    label: '',
-    selectedIcon: Icon(Icons.playlist_play_outlined),
-  ),
-  NavigationDestination(
-    tooltip: '',
-    icon: Icon(Icons.info_outline_rounded),
-    label: '',
-    selectedIcon: Icon(Icons.info_rounded),
-  ),
-];
-
 // NavigationRail shows if the screen width is greater or equal to
 // screenWidthThreshold; otherwise, NavigationBar is used for navigation.
-const double narrowScreenWidthThreshold = 450;
 const Color m3BaseColor = Color(0xff6750a4);
 const List<Color> colorOptions = [m3BaseColor, Colors.blue, Colors.teal, Colors.green, Colors.yellow, Colors.orange, Colors.pink];
 const List<String> colorText = <String>[
@@ -241,4 +192,4 @@ const List<String> colorText = <String>[
   'Orange',
   'Pink',
 ];
-const apptitle = 'World tunes radio';
+const apptitle = 'ANIMA AMORIS';
