@@ -1,6 +1,6 @@
-# radio_amoris
+# radioamoris
 
-![Internet radio ANIMA AMORIS. Acid trance electronic, ambient, techno](https://raw.githubusercontent.com/izinin/radio_amoris/master/art/promo_1024.png)
+![Internet radio ANIMA AMORIS. Acid trance electronic, ambient, techno](https://raw.githubusercontent.com/izinin/radioamoris/master/art/promo_1024.png)
 
 A Flutter project. This is a companion application to [electronic music stream collection](https://anima.sknt.ru/) 
 Trance And Uplifting Music, Psychedelic Dance Electronic, Acid Trance Electronic, Experimental Noise Space Dark Drone Electronic.
@@ -25,3 +25,8 @@ For help getting started with Flutter, check
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## How to build
+
+* the project uses codegenerator `build_runner`
+* to generate class supporting code, use command: `flutter pub run build_runner build --delete-conflicting-outputs`

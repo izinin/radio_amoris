@@ -1,0 +1,46 @@
+package com.zindolla.radioamoris;
+
+import static android.app.NotificationManager.IMPORTANCE_LOW;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
+import android.util.Log;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
+public class MainApplication extends io.flutter.app.FlutterApplication {
+    public static final String CHANNEL_ID = "myRadioServiceChannel";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // disabling SSL host verification in ExoPlayer
+        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        });
+
+        createNotificationChannel();
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "MyRadio Service Channel",
+                    IMPORTANCE_LOW
+            );
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(serviceChannel);
+            }else{
+                Log.e(MainActivity.LOGTAG, "cannot obtain NotificationManager");
+            }
+        }
+    }
+}
