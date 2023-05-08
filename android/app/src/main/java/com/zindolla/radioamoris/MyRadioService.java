@@ -199,7 +199,7 @@ public class MyRadioService extends Service {
         androidx.media.app.NotificationCompat.MediaStyle style = new androidx.media.app.NotificationCompat.MediaStyle();
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_radio)
-                .setContentTitle("World Tunes Radio")
+                .setContentTitle("Radio Amoris")
                 .setContentText(tuneName)
                 .setContentIntent(showAppIntentPending)
                 .setStyle(style);

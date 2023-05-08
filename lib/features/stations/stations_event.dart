@@ -23,7 +23,7 @@ class InitAppDataEvent extends StationsEvent {
 }
 
 class LoadStationsEvent extends StationsEvent {
-  static const metadataRefreshDuration = 1;
+  static const metadataRefreshDuration = 60;
   LoadStationsEvent();
   @override
   Stream<StationsState> applyAsync({StationsState? currentState, StationsBloc? bloc}) async* {
@@ -33,7 +33,7 @@ class LoadStationsEvent extends StationsEvent {
         for (var el in AppData.inMemoryStations) {
           await bloc?.repo.fillMetadata(el);
         }
-        Timer(const Duration(seconds: 10), () {
+        Timer(const Duration(seconds: metadataRefreshDuration), () {
           Timer.periodic(const Duration(seconds: metadataRefreshDuration), (timer) async {
             for (var el in AppData.inMemoryStations) {
               await bloc?.repo.fillMetadata(el);
