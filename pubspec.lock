@@ -319,10 +319,10 @@ packages:
     dependency: "direct main"
     description:
       name: get_it
-      sha256: ca77bd0c23e609e09a70989726295a92978589745e129c27d354e61e4070f804
+      sha256: "43133b45f32f1d96bbaeb43ea35a50ce854981baa80f47c3e26ee2ad23bef113"
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.1"
+    version: "7.5.0"
   glob:
     dependency: transitive
     description:
@@ -627,14 +627,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.3"
-  recase:
-    dependency: transitive
-    description:
-      name: recase
-      sha256: e4eb4ec2dcdee52dcf99cb4ceabaffc631d7424ee55e56f280bc039737f89213
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.1.0"
   rxdart:
     dependency: "direct main"
     description:
@@ -856,22 +848,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.2"
-  xml_annotation:
-    dependency: "direct main"
-    description:
-      name: xml_annotation
-      sha256: "4c67438bd8cbe4c717b66f3991631ea3cdd372dc77255f9fd166a6b6e1cf6965"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
-  xml_serializable:
-    dependency: "direct dev"
-    description:
-      name: xml_serializable
-      sha256: dad10b2f59dc75b90df0875301f21b92ec788bba4018819f69c21e727b470f8d
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.2"
   yaml:
     dependency: transitive
     description:

@@ -33,7 +33,7 @@ class _AppUIState extends State<AppUI> {
   @override
   initState() {
     super.initState();
-    useLightMode = widget._settings.get('useLightMode', defaultValue: false);
+    useLightMode = widget._settings.get('useLightMode', defaultValue: true);
     colorSelected = widget._settings.get('colorSelected', defaultValue: 0);
     themeData = _updateThemes(colorSelected, useLightMode);
   }

@@ -23,12 +23,23 @@ class InitAppDataEvent extends StationsEvent {
 }
 
 class LoadStationsEvent extends StationsEvent {
+  static const metadataRefreshDuration = 1;
   LoadStationsEvent();
   @override
   Stream<StationsState> applyAsync({StationsState? currentState, StationsBloc? bloc}) async* {
     try {
       if (AppData.inMemoryStations.isEmpty) {
         await bloc?.repo.getRemoteData();
+        for (var el in AppData.inMemoryStations) {
+          await bloc?.repo.fillMetadata(el);
+        }
+        Timer(const Duration(seconds: 10), () {
+          Timer.periodic(const Duration(seconds: metadataRefreshDuration), (timer) async {
+            for (var el in AppData.inMemoryStations) {
+              await bloc?.repo.fillMetadata(el);
+            }
+          });
+        });
       }
       yield const LoadStationsState();
     } catch (_, stackTrace) {
@@ -44,13 +55,13 @@ class LoadTuneForStationEvent extends StationsEvent {
 
   @override
   Stream<StationsState> applyAsync({StationsState? currentState, StationsBloc? bloc}) async* {
-      try {
-        await StationsEvent._playerCtl!.exoPlayerStart(_station);
-        yield PlayingStationState(_station);
-      } catch (err) {
-        _station.errorMessage = 'cannot connect';
-        _station.state = TuneState.invalid;
-        yield ErrorPlayerState(_station);
-      }
+    try {
+      await StationsEvent._playerCtl!.exoPlayerStart(_station);
+      yield PlayingStationState(_station);
+    } catch (err) {
+      _station.errorMessage = 'cannot connect';
+      _station.state = TuneState.invalid;
+      yield ErrorPlayerState(_station);
+    }
   }
 }

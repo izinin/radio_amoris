@@ -91,6 +91,11 @@ class StationsScreenState extends State<StationsScreen> {
     MemStation? station = widget._stationsBloc.repo.data?.elementAt(idx);
     return ListTile(
       title: Text(station?.name ?? "no name"),
+      subtitle: ValueListenableBuilder<StationMetadata>(
+          builder: (context, value, child) {
+            return Text('${value.songtitle}, listeners:${value.uniquelisteners}');
+          },
+          valueListenable: station!.metadata!),
       onTap: () {
         if (station == null) {
           return;

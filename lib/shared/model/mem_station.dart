@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 enum TuneState { init, resolved, invalid }
 
 class MemStation {
@@ -5,7 +7,7 @@ class MemStation {
   final String name;
   final String listenurl;
   final String metadataurl;
-  StationMetadata? metadata;
+  ValueNotifier<StationMetadata> metadata = ValueNotifier<StationMetadata>(StationMetadata(0, ''));
 
   var state = TuneState.init;
   var errorMessage = '';
