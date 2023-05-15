@@ -19,16 +19,16 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 
 
-# Android
 # version
-# iOS: 0.1.0+4 
 # nm /Users/izinin/Projects/radioamoris/build/ios/iphoneos/Runner.app/Frameworks/Flutter.framework/Flutter | grep ptrace
 # CORS disabling in testing environment: https://pub.dev/packages/flutter_cors
 # `D:\flutter_pub\cache\bin\fluttercors.bat --disable`
-version: 0.1.2+17
+# Android version: 0.1.2+17
+# iOS: 
+version: 0.1.2+20 
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 # To see which dependencies have newer versions available, run `flutter pub outdated`.
 # To automatically upgrade your package dependencies to the latest versions
@@ -41,17 +41,17 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  dio: ^5.1.1
+  dio: ^5.1.2
   json_annotation: ^4.8.1
   hive_flutter: ^1.1.0
   bloc: ^8.1.1
   flutter_bloc: ^8.1.2
   equatable: ^2.0.5
   flutter_svg: ^2.0.5
-  get_it: ^7.4.1
+  get_it: ^7.6.0
   cached_network_image: ^3.2.3
   rxdart: ^0.27.7
-  path_provider: ^2.0.14
+  path_provider: ^2.0.15
 
 dev_dependencies:
   flutter_test:
