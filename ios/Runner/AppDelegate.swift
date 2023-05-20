@@ -3,15 +3,35 @@ import Flutter
 import SwiftAudio
 import MediaPlayer
 
+let CURR_PLAYING_STREAM_CHANNEL = "com.zindolla.radioamoris/currently-playing"
+let PLAYLIST_CTRL_STREAM_CHANNEL = "com.zindolla.radioamoris/playlist-ctrl"
+let MAIN_METHOD_CHANNEL = "com.zindolla.radioamoris/audio"
+
 @UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterStreamHandler {
     // https://github.com/jorgenhenrichsen/SwiftAudio
     var player: AudioPlayer = AudioPlayer()
     var audioItem: AudioItem!
     var audioCtlChannel: FlutterMethodChannel!
     var action: String!
-    var selection: Int = 0
-    var stations: [[String: String]]!
+    
+    var id: Int!
+    var url: String!
+    var name: String!
+    var assetLogo: String!
+    var logo: String!
+
+    var playlistCtrlEvent: FlutterEventSink?
+
+    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+        self.playlistCtrlEvent = events
+        return nil
+    }
+
+    func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.playlistCtrlEvent =  nil
+        return nil
+    }
 
     override func application(
         _ application: UIApplication,
@@ -37,7 +57,7 @@ import MediaPlayer
         }
         
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-        self.audioCtlChannel = FlutterMethodChannel(name: "com.zindolla.radio_amoris/audio",
+        self.audioCtlChannel = FlutterMethodChannel(name: MAIN_METHOD_CHANNEL,
                                                    binaryMessenger: controller.binaryMessenger)
         audioCtlChannel.setMethodCallHandler({
             [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
@@ -49,21 +69,19 @@ import MediaPlayer
                 guard let args = call.arguments else {
                     return
                 }
-                if let myArgs = args as? [String: Any],
-                    let selection = myArgs["selection"] as? Int,
-                    let stations = myArgs["stations"] as? [[String: String]] {
-                    guard stations.indices.contains(selection),
-                        stations[selection]["url"] != nil else {
-                            print("setMethodCallHandler error : malformed 'create' request data")
-                            return
-                    }
-                    self?.selection = selection
-                    self?.stations = stations
+                if let myArgs = args as? [String: Any] {
+                    self?.id = myArgs["id"] as? Int
+                    let invalidDomainUrl = myArgs["url"] as? String // This is a bug in domain SSL certificate registration
+                    print(invalidDomainUrl ?? "ERROR: nil url")
+                    let fixedDomainUrl = invalidDomainUrl!.replacingOccurrences(of: ".sknt.ru/", with: ".sytes.net/")
+                    self?.url = fixedDomainUrl
+                    self?.name = myArgs["name"] as? String
+                    self?.assetLogo = myArgs["assetLogo"] as? String
+                    self?.logo = myArgs["logo"] as? String
                     self?.playSelecton()
                 } else {
                     result("iOS could not extract flutter arguments in method: (sendParams)")
-                }
-                
+                }                
                 break
             case "exoPlayerPause":
                 self?.player.pause()
@@ -80,6 +98,10 @@ import MediaPlayer
                 return
             }
         })
+        let eventChPlayerCtrl = FlutterEventChannel(name: PLAYLIST_CTRL_STREAM_CHANNEL, binaryMessenger: controller.binaryMessenger)
+
+        eventChPlayerCtrl.setStreamHandler(self)
+
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -103,12 +125,10 @@ import MediaPlayer
     }
     
     func playSelecton(){
-        let url = stations[selection]["url"]!
-        let description = stations[selection]["descr"]!
         //     public init(audioUrl: String, artist: String? = nil, title: String? = nil, albumTitle: String? = nil, sourceType: SourceType, artwork: UIImage? = nil) {
-        audioItem = DefaultAudioItem(audioUrl: url,
+        audioItem = DefaultAudioItem(audioUrl: self.url,
                                      artist: "Radio Anima Amoris",
-                                     title: description,
+                                     title: name,
                                      sourceType: .stream,
                                      artwork: UIImage(named: "LockedScr"))
         do {
@@ -120,12 +140,6 @@ import MediaPlayer
     }
     
     func playTrack(next: Bool){
-        selection += next ? 1 : -1
-        if selection >= stations.count {
-            selection = 0
-        } else if selection < 0 {
-            selection = stations.count - 1
-        }
-        playSelecton()
+        playlistCtrlEvent!(next)
     }
 }
