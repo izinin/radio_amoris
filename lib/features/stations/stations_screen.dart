@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:radioamoris/appdata.dart';
 import 'package:radioamoris/features/stations/index.dart';
 import '../../shared/model/mem_station.dart';
@@ -23,11 +25,20 @@ class StationsScreen extends StatefulWidget {
 class StationsScreenState extends State<StationsScreen> {
   PlayerSingleton? _playerCtl;
   StationsScreenState();
+  static const _playerStateStream = EventChannel('com.zindolla.radioamoris/player-state');
+  static const _playlistCtrlStream = EventChannel('com.zindolla.radioamoris/playlist-ctrl');
 
   @override
   void initState() {
     super.initState();
+    _setupPlatformChannel();
     widget._stationsBloc.add(InitAppDataEvent());
+  }
+
+  _setupPlatformChannel() async {
+    final playerCtl = await GetIt.I.getAsync<PlayerSingleton>();
+    _playerStateStream.receiveBroadcastStream().listen(playerCtl.listenPlayerStateStream);
+    _playlistCtrlStream.receiveBroadcastStream().listen(playerCtl.listenPlaylistCtrlStream);
   }
 
   @override
@@ -95,16 +106,13 @@ class StationsScreenState extends State<StationsScreen> {
           builder: (context, value, child) {
             return Text('${value.songtitle}, listeners:${value.uniquelisteners}');
           },
-          valueListenable: station!.metadata!),
+          valueListenable: station!.metadata),
       onTap: () {
-        if (station == null) {
-          return;
-        }
         widget._stationsBloc.add(LoadTuneForStationEvent(station));
       },
       trailing: (state is PlayingStationState)
           ? _getPlayerControlForStation(station)
-          : (station?.state == TuneState.invalid)
+          : (station.state == TuneState.invalid)
               ? const Icon(Icons.error_outline_rounded)
               : const SizedBox(width: 50, height: 50),
     );

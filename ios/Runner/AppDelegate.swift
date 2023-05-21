@@ -3,9 +3,17 @@ import Flutter
 import SwiftAudio
 import MediaPlayer
 
-let CURR_PLAYING_STREAM_CHANNEL = "com.zindolla.radioamoris/currently-playing"
-let PLAYLIST_CTRL_STREAM_CHANNEL = "com.zindolla.radioamoris/playlist-ctrl"
-let MAIN_METHOD_CHANNEL = "com.zindolla.radioamoris/audio"
+enum ChannelName {
+  static let audio = "com.zindolla.radioamoris/audio"
+  static let stream_player_state = "com.zindolla.radioamoris/player-state"
+  static let stream_playlist_ctl = "com.zindolla.radioamoris/playlist-ctrl"
+}
+
+enum MyPlayerCommand : Int {
+    case IDLE = 0
+    case PLAY
+    case PAUSE
+}
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate, FlutterStreamHandler {
@@ -21,15 +29,17 @@ let MAIN_METHOD_CHANNEL = "com.zindolla.radioamoris/audio"
     var assetLogo: String!
     var logo: String!
 
+    var currCmd: MyPlayerCommand = MyPlayerCommand.IDLE
     var playlistCtrlEvent: FlutterEventSink?
+    var playerStateEventHandler = PlayerStateStreamHandler()
 
     func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        self.playlistCtrlEvent = events
+        playlistCtrlEvent = events
         return nil
     }
 
     func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        self.playlistCtrlEvent =  nil
+        playlistCtrlEvent =  nil
         return nil
     }
 
@@ -37,7 +47,9 @@ let MAIN_METHOD_CHANNEL = "com.zindolla.radioamoris/audio"
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        GeneratedPluginRegistrant.register(with: self)
         self.player.event.stateChange.addListener(self, self.handleAudioPlayerStateChange)
+        
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [.defaultToSpeaker, .allowAirPlay, .allowBluetooth])
             print("Playback OK")
@@ -57,7 +69,7 @@ let MAIN_METHOD_CHANNEL = "com.zindolla.radioamoris/audio"
         }
         
         let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-        self.audioCtlChannel = FlutterMethodChannel(name: MAIN_METHOD_CHANNEL,
+        self.audioCtlChannel = FlutterMethodChannel(name: ChannelName.audio,
                                                    binaryMessenger: controller.binaryMessenger)
         audioCtlChannel.setMethodCallHandler({
             [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
@@ -79,17 +91,22 @@ let MAIN_METHOD_CHANNEL = "com.zindolla.radioamoris/audio"
                     self?.assetLogo = myArgs["assetLogo"] as? String
                     self?.logo = myArgs["logo"] as? String
                     self?.playSelecton()
+                    self!.currCmd = MyPlayerCommand.PLAY
                 } else {
+                    self!.currCmd = MyPlayerCommand.IDLE
                     result("iOS could not extract flutter arguments in method: (sendParams)")
                 }                
                 break
             case "exoPlayerPause":
+                self!.currCmd = MyPlayerCommand.PAUSE
                 self?.player.pause()
                 break
             case "exoPlayerResume":
+                self!.currCmd = MyPlayerCommand.PLAY
                 self?.player.play()
                 break
             case "destroy":
+                self!.currCmd = MyPlayerCommand.IDLE
                 self?.player.stop()
                 result("audio.onDestroy")
                 break
@@ -97,35 +114,28 @@ let MAIN_METHOD_CHANNEL = "com.zindolla.radioamoris/audio"
                 result(FlutterMethodNotImplemented)
                 return
             }
+            result(0)
         })
-        let eventChPlayerCtrl = FlutterEventChannel(name: PLAYLIST_CTRL_STREAM_CHANNEL, binaryMessenger: controller.binaryMessenger)
+        let eventChPlaylistCtrl = FlutterEventChannel(name: ChannelName.stream_playlist_ctl, binaryMessenger: controller.binaryMessenger)
+        let eventChPlayerState = FlutterEventChannel(name: ChannelName.stream_player_state, binaryMessenger: controller.binaryMessenger)
 
-        eventChPlayerCtrl.setStreamHandler(self)
+        eventChPlaylistCtrl.setStreamHandler(self)
+        eventChPlayerState.setStreamHandler(playerStateEventHandler)
 
-        GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
     
     func handleAudioPlayerStateChange(state: AudioPlayerState) {
-        var notifyState = "audio.onError"
-        switch(state){
-        case AudioPlayerState.playing:
-            notifyState = self.action == "resume" ? "audio.onResume" : "audio.onCreate"
-            self.audioCtlChannel.invokeMethod(notifyState, arguments: 0)
-            break
-        case AudioPlayerState.paused:
-            notifyState = "audio.onPause"
-            self.audioCtlChannel.invokeMethod(notifyState, arguments: 0)
-            break
-        default:
-            break
-        }
-
+        let flutterAState = (state == AudioPlayerState.playing || state == AudioPlayerState.paused) ? 3 : 1;
         print("handleAudioPlayerStateChange: \(state)")
+        guard playerStateEventHandler.getPlayerStateEvent != nil else {
+            print("getPlayerStateEvent is nil")
+            return
+        }
+        playerStateEventHandler.getPlayerStateEvent!(["state": flutterAState, "command": currCmd.rawValue])
     }
     
     func playSelecton(){
-        //     public init(audioUrl: String, artist: String? = nil, title: String? = nil, albumTitle: String? = nil, sourceType: SourceType, artwork: UIImage? = nil) {
         audioItem = DefaultAudioItem(audioUrl: self.url,
                                      artist: "Radio Anima Amoris",
                                      title: name,
@@ -140,6 +150,29 @@ let MAIN_METHOD_CHANNEL = "com.zindolla.radioamoris/audio"
     }
     
     func playTrack(next: Bool){
+        self.currCmd = MyPlayerCommand.PLAY
         playlistCtrlEvent!(next)
     }
 }
+
+class PlayerStateStreamHandler: NSObject, FlutterStreamHandler {
+    var playerStateEvent: FlutterEventSink?
+    
+    // Read-only  property
+    var getPlayerStateEvent: FlutterEventSink? {
+        get {
+            return self.playerStateEvent
+        }
+    }
+
+    public func onListen(withArguments arguments: Any?, eventSink: @escaping FlutterEventSink) -> FlutterError? {
+        self.playerStateEvent = eventSink
+        return nil
+    }
+
+    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        self.playerStateEvent =  nil
+        return nil
+    }
+}               
+

@@ -63,16 +63,9 @@ class PlayerSingleton {
   static final PlayerSingleton _singleton = PlayerSingleton._internal();
 
   factory PlayerSingleton() => _singleton;
-
   static bool once = true;
-
   static const _platform = MethodChannel('com.zindolla.radioamoris/audio');
-  static const EventChannel _playerStateStream = EventChannel('com.zindolla.radioamoris/player-state');
-  static const EventChannel _currPlayingStream = EventChannel('com.zindolla.radioamoris/currently-playing');
-  static const EventChannel _playlistCtrlStream = EventChannel('com.zindolla.radioamoris/playlist-ctrl');
-  static StreamSubscription? _playerStateStreamSubscr;
-  static StreamSubscription? _currPlayingStreamSubscr;
-  static StreamSubscription? _playlistCtrlStreamSubscr;
+
   // https://stackoverflow.com/questions/53841750/flutter-stream-has-already-been-listened-to/55893532#55893532
   static final StreamController<MyradioPlayingState> _playerStatecontroller = BehaviorSubject();
 
@@ -110,11 +103,7 @@ class PlayerSingleton {
 
   Future<void> exoPlayerStart(MemStation tune) async {
     try {
-      await _platform
-          .invokeMethod('exoPlayerStart', {'id': tune.id, 'url': tune.listenurl, 'name': tune.name, 'logo': null, 'assetLogo': 'art/lockscr_256.png'});
-      _startPlayerStateListener();
-      _startNowPlayingListener();
-      _startPlaylistCtrlListener();
+      await _platform.invokeMethod('exoPlayerStart', {'id': tune.id, 'url': tune.listenurl, 'name': tune.name, 'logo': null, 'assetLogo': 'art/lockscr_256.png'});
       AppData.currentTune.value = tune;
     } on PlatformException catch (e) {
       _playerErrors.add("exoPlayerStart error: '${e.message}'");
@@ -137,19 +126,7 @@ class PlayerSingleton {
     }
   }
 
-  void _startPlayerStateListener() {
-    _playerStateStreamSubscr = _playerStateStreamSubscr ?? _playerStateStream.receiveBroadcastStream().listen(_listenPlayerStateStream);
-  }
-
-  void _startNowPlayingListener() {
-    _currPlayingStreamSubscr = _currPlayingStreamSubscr ?? _currPlayingStream.receiveBroadcastStream().listen(_listenNowPlayingStream);
-  }
-
-  void _startPlaylistCtrlListener() {
-    _playlistCtrlStreamSubscr = _playlistCtrlStreamSubscr ?? _playlistCtrlStream.receiveBroadcastStream().listen(_listenPlaylistCtrlStream);
-  }
-
-  void _listenPlayerStateStream(raw) {
+  void listenPlayerStateStream(raw) {
     final value = raw as Map<Object?, Object?>;
     final stateInt = value['state'] as int;
     MyradioProcessingState state = MyradioProcessingState.values.firstWhere((e) => e.index == stateInt, orElse: () => MyradioProcessingState.idle);
@@ -158,7 +135,7 @@ class PlayerSingleton {
     _playerStatecontroller.add(MyradioPlayingState(state, command));
   }
 
-  void _listenNowPlayingStream(raw) {
+  void listenNowPlayingStream(raw) {
     final value = raw as Map<Object?, Object?>;
     final title = value['title'] as String;
     final url = value['url'] as String;
@@ -167,7 +144,7 @@ class PlayerSingleton {
     }
   }
 
-  void _listenPlaylistCtrlStream(raw) {
+  void listenPlaylistCtrlStream(raw) {
     final tuneId = AppData.currentTune.value?.id;
     if (tuneId == null) {
       return;
