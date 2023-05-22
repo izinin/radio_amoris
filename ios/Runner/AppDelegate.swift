@@ -1,6 +1,6 @@
 import UIKit
 import Flutter
-import SwiftAudio
+import AVFoundation
 import MediaPlayer
 
 enum ChannelName {

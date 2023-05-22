@@ -51,5 +51,3 @@ post_install do |installer|
     
   end
 end
-# https://cocoapods.org/pods/SwiftAudio
-pod 'SwiftAudio', '~> 0.11.2'

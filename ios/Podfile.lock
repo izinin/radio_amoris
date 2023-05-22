@@ -9,18 +9,15 @@ PODS:
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
-  - SwiftAudio (0.11.2)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
-  - SwiftAudio (~> 0.11.2)
 
 SPEC REPOS:
   trunk:
     - FMDB
-    - SwiftAudio
 
 EXTERNAL SOURCES:
   Flutter:
@@ -35,8 +32,7 @@ SPEC CHECKSUMS:
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
-  SwiftAudio: 217f5f184b27a0e25ff0fe7647021f05a21c06c9
 
-PODFILE CHECKSUM: 12dd18b88a89994f0f47e02ae2de638d4510c16e
+PODFILE CHECKSUM: c4d23e114789f718e38d6799f958c8de6908bdd6
 
 COCOAPODS: 1.11.2
