@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:radioamoris/shared/model/mem_station.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AppData {
   // singleton
@@ -83,22 +81,7 @@ class PlayerSingleton {
       return _singleton;
     }
     once = false;
-    await _getImageFileFromAssets('art/lockscr_256.png');
     return _singleton;
-  }
-
-  static Future<String> _getImageFileFromAssets(String resource) async {
-    final byteData = await rootBundle.load(resource);
-    final buffer = byteData.buffer;
-    Directory appDir = await getApplicationSupportDirectory(); // getTemporaryDirectory();
-    final resourceArr = resource.split('/');
-    final filePath = '${appDir.path}/${resourceArr[resourceArr.length - 1]}';
-    var file = File(filePath);
-    final existing = await file.exists();
-    if (!existing) {
-      file.writeAsBytes(buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    }
-    return 'content:/$filePath';
   }
 
   Future<void> exoPlayerStart(MemStation tune) async {
