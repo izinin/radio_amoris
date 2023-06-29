@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -46,10 +48,20 @@ class _AppUIState extends State<AppUI> {
       themeMode: useLightMode ? ThemeMode.light : ThemeMode.dark,
       theme: themeData,
       home: LayoutBuilder(builder: (context, constraints) {
+        double ctrlPanelWidth = min(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
         return Scaffold(
-          appBar: createAppBar(),
-          body: const StationsPage(),
-        );
+            appBar: createAppBar(),
+            body: Column(
+              children: [
+                Container(
+                  width: ctrlPanelWidth,
+                  height: 72.0,
+                  alignment: Alignment.center,
+                  // color: Colors.amber[600],
+                ),
+                const Expanded(child: StationsPage()),
+              ],
+            ));
       }),
     );
   }
