@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'features/stations/stations_page.dart';
 import 'appdata.dart';
+import 'shared/volume_slider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +58,7 @@ class _AppUIState extends State<AppUI> {
                   width: ctrlPanelWidth,
                   height: 72.0,
                   alignment: Alignment.center,
+                  child: const VolumeSlider(),
                   // color: Colors.amber[600],
                 ),
                 const Expanded(child: StationsPage()),

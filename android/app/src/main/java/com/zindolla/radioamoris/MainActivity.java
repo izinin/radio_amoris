@@ -32,7 +32,6 @@ public class MainActivity extends FlutterActivity {
     public static final String TOSERVICE_TUNE_ASSETLOGO = "tune.asset.logo";
     private static final String PLAYER_CMD_METHOD_CHANNEL = "com.zindolla.radioamoris/audio";
     private static final String PLAYER_STATE_STREAM_CHANNEL = "com.zindolla.radioamoris/player-state";
-    private static final String CURR_PLAYING_STREAM_CHANNEL = "com.zindolla.radioamoris/currently-playing";
     private static final String PLAYLIST_CTRL_STREAM_CHANNEL = "com.zindolla.radioamoris/playlist-ctrl";
 
     public final static String LOGTAG = MainActivity.class.getSimpleName();
@@ -44,7 +43,6 @@ public class MainActivity extends FlutterActivity {
     public static EventChannel.EventSink playlistCtrlEvent;
 
     public static final String PLAYER_STATE_LISTENER = "com.zindolla.radioamoris.PLAYER_STATE";
-    public static final String CURRENTLY_PLAYING = "com.zindolla.radioamoris.CURRENTLY_PLAYING";
     public static final String PLAYLIST_CTRL = "com.zindolla.radioamoris.PLAYLIST_CTRL";
 
     private BroadcastReceiver playerStateListener = new BroadcastReceiver() {
@@ -54,20 +52,6 @@ public class MainActivity extends FlutterActivity {
                 int state = intent.getIntExtra("state", ExoPlayer.STATE_ENDED);
                 int command = intent.getIntExtra("command", MyPlayerCommand.PLAY.ordinal());
                 playerStateEvent.success(ImmutableMap.of("state", state, "command", command));
-            }
-        }
-    };
-
-    private BroadcastReceiver currentlyPlayingListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(CURRENTLY_PLAYING)) {
-                String title = intent.getStringExtra("title");
-                if(title == null) title = "";
-                String url = intent.getStringExtra("url");
-                if(url == null) url = "";
-                Log.w(LOGTAG, String.format("obtained media metada: title = '%s', url = '%s'", title, url));
-                currentlyPlayingEvent.success(ImmutableMap.of("title", title, "url", url));
             }
         }
     };
@@ -142,21 +126,6 @@ public class MainActivity extends FlutterActivity {
                     }
                 }
         );
-        new EventChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CURR_PLAYING_STREAM_CHANNEL).setStreamHandler(
-                new EventChannel.StreamHandler() {
-                    @Override
-                    public void onListen(Object args, final EventChannel.EventSink events) {
-                        Log.w(LOGTAG, "Adding listener: currentlyPlayingEvent");
-                        currentlyPlayingEvent = events;
-                    }
-
-                    @Override
-                    public void onCancel(Object args) {
-                        Log.w(LOGTAG, "Cancelling listener: currentlyPlayingEvent");
-                        currentlyPlayingEvent = null;
-                    }
-                }
-        );
         new EventChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), PLAYLIST_CTRL_STREAM_CHANNEL).setStreamHandler(
                 new EventChannel.StreamHandler() {
                     @Override
@@ -176,9 +145,6 @@ public class MainActivity extends FlutterActivity {
         IntentFilter istate = new IntentFilter();
         istate.addAction(PLAYER_STATE_LISTENER);
         playerStateNotifManager.registerReceiver(playerStateListener, istate);
-        IntentFilter iinfo = new IntentFilter();
-        iinfo.addAction(CURRENTLY_PLAYING);
-        playerStateNotifManager.registerReceiver(currentlyPlayingListener, iinfo);
         IntentFilter plylistCtrl = new IntentFilter();
         plylistCtrl.addAction(PLAYLIST_CTRL);
         playerStateNotifManager.registerReceiver(playlistCtrlListener, plylistCtrl);
@@ -188,7 +154,6 @@ public class MainActivity extends FlutterActivity {
     protected void onDestroy(){
         super.onDestroy();
         playerStateNotifManager.unregisterReceiver(playerStateListener);
-        playerStateNotifManager.unregisterReceiver(currentlyPlayingListener);
         playerStateNotifManager.unregisterReceiver(playlistCtrlListener);
         Intent intent = new Intent( getApplicationContext(), MyRadioService.class );
         intent.setAction(MyRadioService.EXIT_SERVICE);
