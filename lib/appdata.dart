@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:radioamoris/shared/model/mem_station.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 
 class AppData {
   // singleton
@@ -70,7 +71,9 @@ class PlayerSingleton {
   static final List<String> _playerErrors = [];
 
   // private constructor
-  PlayerSingleton._internal();
+  PlayerSingleton._internal() {
+    FlutterVolumeController.showSystemUI = false;
+  }
 
   static String get settingsBoxName => 'settings';
   Stream<MyradioPlayingState> get getPlayerStateStream => _playerStatecontroller.stream;
