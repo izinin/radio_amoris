@@ -71,9 +71,7 @@ class PlayerSingleton {
   static final List<String> _playerErrors = [];
 
   // private constructor
-  PlayerSingleton._internal() {
-    FlutterVolumeController.showSystemUI = false;
-  }
+  PlayerSingleton._internal();
 
   static String get settingsBoxName => 'settings';
   Stream<MyradioPlayingState> get getPlayerStateStream => _playerStatecontroller.stream;
@@ -81,6 +79,8 @@ class PlayerSingleton {
   // the second step initialiazation
   static Future<PlayerSingleton> instance() async {
     if (!once) {
+      FlutterVolumeController.showSystemUI = false;
+      await FlutterVolumeController.setIOSAudioSessionCategory(category: AudioSessionCategory.playback);
       return _singleton;
     }
     once = false;

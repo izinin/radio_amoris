@@ -13,6 +13,7 @@ class VolumeSlider extends StatefulWidget {
 class _VolumeSliderState extends State<VolumeSlider> {
   double _volume = 0;
   Timer? _timer;
+
   @override
   void initState() {
     super.initState();
@@ -21,6 +22,12 @@ class _VolumeSliderState extends State<VolumeSlider> {
         _volume = volume;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    FlutterVolumeController.removeListener();
+    super.dispose();
   }
 
   @override
@@ -33,9 +40,7 @@ class _VolumeSliderState extends State<VolumeSlider> {
         onChanged: (val) {
           _volume = val;
           setState(() {});
-          if (_timer != null) {
-            _timer!.cancel();
-          }
+          _timer?.cancel();
           _timer = Timer(const Duration(milliseconds: 200), () {
             FlutterVolumeController.setVolume(val);
           });
