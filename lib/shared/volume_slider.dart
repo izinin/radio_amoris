@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 
@@ -10,7 +12,7 @@ class VolumeSlider extends StatefulWidget {
 
 class _VolumeSliderState extends State<VolumeSlider> {
   double _volume = 0;
-
+  Timer? _timer;
   @override
   void initState() {
     super.initState();
@@ -24,12 +26,19 @@ class _VolumeSliderState extends State<VolumeSlider> {
   @override
   Widget build(BuildContext context) {
     return Slider(
-      value: _volume,
-      onChanged: (value) {
-        setState(() {
-          FlutterVolumeController.setVolume(value);
+        value: _volume,
+        min: 0,
+        max: 1,
+        divisions: 100,
+        onChanged: (val) {
+          _volume = val;
+          setState(() {});
+          if (_timer != null) {
+            _timer!.cancel();
+          }
+          _timer = Timer(const Duration(milliseconds: 200), () {
+            FlutterVolumeController.setVolume(val);
+          });
         });
-      },
-    );
   }
 }
