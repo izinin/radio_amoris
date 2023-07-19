@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:radioamoris/shared/model/mem_station.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 
 class AppData {
   // singleton
@@ -78,6 +79,8 @@ class PlayerSingleton {
   // the second step initialiazation
   static Future<PlayerSingleton> instance() async {
     if (!once) {
+      FlutterVolumeController.showSystemUI = false;
+      await FlutterVolumeController.setIOSAudioSessionCategory(category: AudioSessionCategory.playback);
       return _singleton;
     }
     once = false;

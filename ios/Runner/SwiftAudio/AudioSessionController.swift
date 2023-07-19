@@ -9,7 +9,7 @@ import Foundation
 import AVFoundation
 
 
-public protocol AudioSessionControllerDelegate: class {
+public protocol AudioSessionControllerDelegate: AnyObject {
     func handleInterruption(type: AVAudioSession.InterruptionType)
 }
 

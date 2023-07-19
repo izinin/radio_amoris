@@ -8,7 +8,7 @@
 import Foundation
 import AVFoundation
 
-protocol AVPlayerItemObserverDelegate: class {
+protocol AVPlayerItemObserverDelegate: AnyObject {
     
     /**
      Called when the observed item updates the duration.

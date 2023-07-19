@@ -19,6 +19,7 @@ public class PlayerEventListener implements Player.Listener {
     public MyPlayerCommand currCmd = MyPlayerCommand.IDLE;
     private IcyInfo icyInfo;
     private IcyHeaders icyHeaders;
+    public final static String LOGTAG = PlayerEventListener.class.getSimpleName();
 
     public PlayerEventListener(Context context) {
         this.context = context;
@@ -38,10 +39,7 @@ public class PlayerEventListener implements Player.Listener {
             final Metadata.Entry entry = metadata.get(i);
             if (entry instanceof IcyInfo) {
                 icyInfo = (IcyInfo) entry;
-                Intent RTReturn = new Intent(MainActivity.CURRENTLY_PLAYING);
-                RTReturn.putExtra("title", icyInfo.title == null ? "" : icyInfo.title);
-                RTReturn.putExtra("url",  icyInfo.url == null ? "" : icyInfo.url);
-                LocalBroadcastManager.getInstance(context).sendBroadcast(RTReturn);
+                Log.w(LOGTAG, "received stream metadata: " + icyInfo.toString());
             }
         }
     }
