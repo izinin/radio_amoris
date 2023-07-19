@@ -17,13 +17,6 @@ public class MainApplication extends io.flutter.app.FlutterApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        // disabling SSL host verification in ExoPlayer
-        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        });
-
         createNotificationChannel();
     }
 

@@ -10,7 +10,7 @@ class StationsProvider {
   StationsProvider(this.dio);
 
   Future<RemoteStationsModel> loadAsync() async {
-    const url = 'http://anima.sknt.ru/settings.json';
+    const url = 'https://anima.sknt.ru/settings.json';
     final response = await dio.get<dynamic>(url);
 
     final stations = RemoteStationsModel.fromJson(response.data!);
