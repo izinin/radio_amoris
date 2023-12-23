@@ -9,7 +9,7 @@ Trance And Uplifting Music, Psychedelic Dance Electronic, Acid Trance Electronic
  <tr>
  <td> <a href='https://play.google.com/store/apps/details?id=com.zindolla.radioamoris&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' width="200px"/> </a>
  </td>
- <td> <a href="https://apps.apple.com/us/app/radio-anima-amoris/id1487385684?mt=8"><img alt='Get it on App Store' src='https://linkmaker.itunes.apple.com/en-us/badge-lrg.svg?releaseDate=2019-11-15&kind=iossoftware&bubble=ios_apps' width="175px"/></a>  
+ <td> <a href="https://apps.apple.com/us/app/radio-anima-amoris/id1487385684?itsct=apps_box_badge&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1573689600" alt="Download on the App Store" style="border-radius: 13px; width: 250px; height: 83px;"></a>  
  </td>
  </tr>
 </table>
