@@ -20,7 +20,7 @@ Future<void> main() async {
 
 class AppUI extends StatefulWidget {
   final Box _settings;
-  const AppUI(this._settings, {Key? key}) : super(key: key);
+  const AppUI(this._settings, {super.key});
 
   @override
   State<AppUI> createState() => _AppUIState();

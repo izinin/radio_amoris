@@ -10,9 +10,8 @@ import '../../shared/model/audio_player_ctl_btn.dart';
 class StationsScreen extends StatefulWidget {
   const StationsScreen({
     required StationsBloc stationsBloc,
-    Key? key,
-  })  : _stationsBloc = stationsBloc,
-        super(key: key);
+    super.key,
+  })  : _stationsBloc = stationsBloc;
 
   final StationsBloc _stationsBloc;
 
