@@ -6,7 +6,7 @@ class AudioPlayerCtlBtn extends StatelessWidget {
   final PlayerSingleton _playerCtl;
   final double _iconSize;
 
-  const AudioPlayerCtlBtn(this._playerCtl, this._iconSize, {Key? key}) : super(key: key);
+  const AudioPlayerCtlBtn(this._playerCtl, this._iconSize, {super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,7 @@ class StationsBloc extends Bloc<StationsEvent, StationsState> {
     return _repository;
   }
 
-  StationsBloc(StationsState initialState) : super(initialState) {
+  StationsBloc(super.initialState) {
     on<StationsEvent>((event, emit) {
       return emit.forEach<StationsState>(
         event.applyAsync(currentState: state, bloc: this),

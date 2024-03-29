@@ -83,10 +83,7 @@ enum MyPlayerCommand : Int {
                 }
                 if let myArgs = args as? [String: Any] {
                     self?.id = myArgs["id"] as? Int
-                    let invalidDomainUrl = myArgs["url"] as? String // This is a bug in domain SSL certificate registration
-                    print(invalidDomainUrl ?? "ERROR: nil url")
-                    let fixedDomainUrl = invalidDomainUrl!.replacingOccurrences(of: ".sknt.ru/", with: ".sytes.net/")
-                    self?.url = fixedDomainUrl
+                    self?.url = myArgs["url"] as? String
                     self?.name = myArgs["name"] as? String
                     self?.assetLogo = myArgs["assetLogo"] as? String
                     self?.logo = myArgs["logo"] as? String
