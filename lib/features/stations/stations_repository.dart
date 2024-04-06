@@ -6,7 +6,10 @@ import '../../shared/model/mem_station.dart';
 import 'model/remote_stations_model.dart';
 
 class StationsRepository {
-  final StationsProvider _stationsProvider = StationsProvider(Dio());
+  final StationsProvider _stationsProvider = StationsProvider(Dio(BaseOptions(
+    connectTimeout: const Duration(seconds: 5),
+    receiveTimeout: const Duration(seconds: 3),
+  )));
   static int _channelCounter = 1;
 
   List<MemStation>? get data {

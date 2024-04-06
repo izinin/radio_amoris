@@ -1,4 +1,4 @@
-{
+const StationData = {
 	"channels": [
 		{
 			"name": "Trance",
@@ -116,4 +116,4 @@
 			"metadata": "https://amoris.sknt.ru/bible/stats.json"
 		}
 	]
-}
+};
