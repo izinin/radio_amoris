@@ -1,17 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
 import '../../shared/model/mem_station.dart';
 import 'model/remote_stations_model.dart';
-import 'model/stations_data.dart';
 
 class StationsProvider {
   final Dio dio;
   StationsProvider(this.dio);
 
   Future<RemoteStationsModel> loadAsync() async {
-    const url = 'https://anima.sknt.ru/settings.json';
+    const url = 'https://amoris.sknt.ru/settings.json';
     final response = await dio.get<dynamic>(url);
 
     final stations = RemoteStationsModel.fromJson(response.data!);
@@ -20,9 +20,31 @@ class StationsProvider {
   }
 
   fillTuneData(MemStation el) async {
-    // NOTE: this call returns 404 error with user agent header
-    const userAgent = 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36';
-    final response = await dio.get<dynamic>(el.metadataurl, options: Options(headers: {'user-agent': userAgent}));
-    el.metadata.value = StationMetadata(response.data['uniquelisteners'], response.data['songtitle']);
+    final response = await dio.get<String>(el.metadataurl);
+    try {
+      final extractedJson = extractValidJson(response.data!);
+      int listeners = extractedJson['uniquelisteners'] as int;
+      String songtitle = extractedJson['songtitle'] as String;
+      el.metadata.value = StationMetadata(listeners, songtitle);
+    } catch (e) {
+      el.metadata.value = StationMetadata(0, 'Error extracting JSON: $e');
+    }
+  }
+
+  Map<String, dynamic> extractValidJson(String input) {
+    // Regular expression to match the JSON content within the string
+    final RegExp jsonRegex = RegExp(r'\{[^\}]+\}');
+
+    // Find the first match of the JSON content
+    final jsonMatch = jsonRegex.firstMatch(input);
+
+    // If a match is found, return the extracted JSON string
+    if (jsonMatch != null) {
+      final jsonString = jsonMatch.group(0)!;
+      return jsonDecode(jsonString);
+    } else {
+      // If no match is found, handle the error appropriately
+      throw Exception('Invalid JSON format in the input string');
+    }
   }
 }
