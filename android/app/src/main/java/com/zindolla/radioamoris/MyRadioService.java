@@ -203,6 +203,7 @@ public class MyRadioService extends Service {
                 .setContentText(tuneName)
                 .setContentIntent(showAppIntentPending)
                 .setStyle(style);
+                .setForegroundServiceType(NotificationCompat.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
 
         Bitmap bm = null;
         if(tuneLogo != null && tuneLogo.length() > 10) {
