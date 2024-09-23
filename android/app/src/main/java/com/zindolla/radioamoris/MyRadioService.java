@@ -202,7 +202,7 @@ public class MyRadioService extends Service {
                 .setContentTitle("Radio Amoris")
                 .setContentText(tuneName)
                 .setContentIntent(showAppIntentPending)
-                .setStyle(style);
+                .setStyle(style)
                 .setForegroundServiceType(NotificationCompat.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
 
         Bitmap bm = null;
