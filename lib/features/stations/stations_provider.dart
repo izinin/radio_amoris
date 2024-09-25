@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 
 import '../../shared/model/mem_station.dart';
 import 'model/remote_stations_model.dart';
+import 'model/stations_data.dart';
 
 class StationsProvider {
   final Dio dio;

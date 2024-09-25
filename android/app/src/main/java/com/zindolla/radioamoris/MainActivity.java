@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -67,6 +68,18 @@ public class MainActivity extends FlutterActivity {
     };
     LocalBroadcastManager playerStateNotifManager;
 
+    // NOTE: breaking change in Android 14 for foreground services, more details are here
+    // https://developer.android.com/develop/background-work/services/foreground-services
+    // https://medium.com/@domen.lanisnik/guide-to-foreground-services-on-android-9d0127dc8f9a
+    private void foregroundService(Intent intent){
+        Log.w(LOGTAG, String.format("starting foreground service with SDK: %s", Build.VERSION.SDK_INT));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            this.startForegroundService(intent);
+        } else {
+            ContextCompat.startForegroundService(this, intent);
+        }
+    }
+
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
@@ -107,7 +120,7 @@ public class MainActivity extends FlutterActivity {
                 if(action != null){
                     intent.setAction(action);
                     intent.putExtra(MyRadioService.BUNDLED_LISTENER, createReceiver(action));
-                    ContextCompat.startForegroundService(this, intent);
+                    foregroundService(intent);
                 }
             }
         );
@@ -157,7 +170,7 @@ public class MainActivity extends FlutterActivity {
         playerStateNotifManager.unregisterReceiver(playlistCtrlListener);
         Intent intent = new Intent( getApplicationContext(), MyRadioService.class );
         intent.setAction(MyRadioService.EXIT_SERVICE);
-        ContextCompat.startForegroundService(this, intent);
+        foregroundService(intent);
     }
 
     private <T> T getMethodChannelVal(String key, MethodCall call, MethodChannel.Result result) {

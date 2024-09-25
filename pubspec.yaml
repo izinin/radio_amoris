@@ -24,7 +24,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # CORS disabling in testing environment: https://pub.dev/packages/flutter_cors
 # `D:\flutter_pub\cache\bin\fluttercors.bat --disable`
 # Android:
-version: 0.1.5+20
+version: 0.1.6+21
 # iOS:
 # version: 0.1.7+28
 
