@@ -2,7 +2,7 @@
 
 ![Internet radio ANIMA AMORIS. Acid trance electronic, ambient, techno](https://raw.githubusercontent.com/izinin/radio_amoris/master/art/promo_1024.png)
 
-A Flutter project. This is a companion application to [electronic music stream collection](https://anima.sknt.ru/) 
+A Flutter project. This is a companion application to [electronic music stream collection](https://amoris.sknt.ru/) 
 Trance And Uplifting Music, Psychedelic Dance Electronic, Acid Trance Electronic, Experimental Noise Space Dark Drone Electronic.
 
 <table style="width:60%;">
@@ -14,7 +14,7 @@ Trance And Uplifting Music, Psychedelic Dance Electronic, Acid Trance Electronic
  </tr>
 </table>
 
-[need designer?](https://www.instagram.com/zizinatart/)
+[need designer?](https://nataliazinina.artstation.com/)
 
 ## Getting Started
 
