@@ -11,7 +11,7 @@ class AppData {
   static final AppData _appData = AppData._internal();
   static bool _isSun = false;
 
-  get isSun {
+  bool get isSun {
     _isSun = !_isSun;
     return _isSun;
   }
@@ -22,11 +22,11 @@ class AppData {
   factory AppData() => _appData;
   static List<MemStation> inMemoryStations = [];
 
-  getDefaultArt() {
+  String getDefaultArt() {
     return isSun ? 'art/sun-60.png' : 'art/moon-60.png';
   }
 
-  static getAssetSvg(String url) {
+  static String getAssetSvg(String url) {
     return url == 'art/sun-60.png' ? 'art/sun.svg' : 'art/moon.svg';
   }
 
@@ -112,7 +112,7 @@ class PlayerSingleton {
     }
   }
 
-  void listenPlayerStateStream(raw) {
+  void listenPlayerStateStream(dynamic raw) {
     final value = raw as Map<Object?, Object?>;
     final stateInt = value['state'] as int;
     MyradioProcessingState state = MyradioProcessingState.values.firstWhere((e) => e.index == stateInt, orElse: () => MyradioProcessingState.idle);
@@ -121,7 +121,7 @@ class PlayerSingleton {
     _playerStatecontroller.add(MyradioPlayingState(state, command));
   }
 
-  void listenNowPlayingStream(raw) {
+  void listenNowPlayingStream(dynamic raw) {
     final value = raw as Map<Object?, Object?>;
     final title = value['title'] as String;
     final url = value['url'] as String;
@@ -130,7 +130,7 @@ class PlayerSingleton {
     }
   }
 
-  void listenPlaylistCtrlStream(raw) {
+  void listenPlaylistCtrlStream(dynamic raw) {
     final tuneId = AppData.currentTune.value?.id;
     if (tuneId == null) {
       return;

@@ -34,7 +34,7 @@ class StationsScreenState extends State<StationsScreen> {
     widget._stationsBloc.add(InitAppDataEvent());
   }
 
-  _setupPlatformChannel() async {
+  Future<void> _setupPlatformChannel() async {
     final playerCtl = await GetIt.I.getAsync<PlayerSingleton>();
     _playerStateStream.receiveBroadcastStream().listen(playerCtl.listenPlayerStateStream);
     _playlistCtrlStream.receiveBroadcastStream().listen(playerCtl.listenPlaylistCtrlStream);
@@ -101,17 +101,25 @@ class StationsScreenState extends State<StationsScreen> {
     MemStation? station = widget._stationsBloc.repo.data?.elementAt(idx);
     return ListTile(
       title: Text(station?.name ?? "no name"),
-      subtitle: ValueListenableBuilder<StationMetadata>(
-          builder: (context, value, child) {
-            return Text('${value.songtitle}, listeners:${value.uniquelisteners}');
-          },
-          valueListenable: station!.metadata),
+      subtitle:
+      station != null
+          ? ValueListenableBuilder<StationMetadata>(
+        valueListenable: station.metadata,
+        builder: (context, value, child) {
+          return Text('${value.songtitle}, listeners: ${value.uniquelisteners}');
+        },
+      )
+          : const Text('no name'),
+
       onTap: () {
+        if (station == null) {
+          return;
+        }
         widget._stationsBloc.add(LoadTuneForStationEvent(station));
       },
       trailing: (state is PlayingStationState)
           ? _getPlayerControlForStation(station)
-          : (station.state == TuneState.invalid)
+          : (station != null && station.state == TuneState.invalid)
               ? const Icon(Icons.error_outline_rounded)
               : const SizedBox(width: 50, height: 50),
     );
