@@ -29,4 +29,4 @@ samples, guidance on mobile development, and a full API reference.
 ## How to build
 
 * the project uses codegenerator `build_runner`
-* to generate class supporting code, use command: `flutter pub run build_runner build --delete-conflicting-outputs`
+* to generate class supporting code, use command: `dart run build_runner build --delete-conflicting-outputs`

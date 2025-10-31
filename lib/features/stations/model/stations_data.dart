@@ -1,4 +1,4 @@
-const StationData = {
+const stationData = {
 	"channels": [
 		{
 			"name": "Trance",

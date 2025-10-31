@@ -42,9 +42,9 @@ class LoadStationsEvent extends StationsEvent {
         });
       }
       yield const LoadStationsState();
-    } catch (_, stackTrace) {
-      developer.log('$_', name: 'LoadStationsEvent', error: _, stackTrace: stackTrace);
-      yield ErrorStationsState(_.toString());
+    } catch (err, stackTrace) {
+      developer.log('$err', name: 'LoadStationsEvent', error: err, stackTrace: stackTrace);
+      yield ErrorStationsState(err.toString());
     }
   }
 }

@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 
 import '../../shared/model/mem_station.dart';
 import 'model/remote_stations_model.dart';
-import 'model/stations_data.dart';
 
 class StationsProvider {
   final Dio dio;
@@ -16,11 +15,11 @@ class StationsProvider {
     final response = await dio.get<dynamic>(url);
 
     final stations = RemoteStationsModel.fromJson(response.data!);
-    // final stations = RemoteStationsModel.fromJson(StationData);
+    // final stations = RemoteStationsModel.fromJson(stationData);
     return stations;
   }
 
-  fillTuneData(MemStation el) async {
+  Future<void> fillTuneData(MemStation el) async {
     final response = await dio.get<String>(el.metadataurl);
     try {
       final extractedJson = extractValidJson(response.data!);
