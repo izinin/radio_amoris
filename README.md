@@ -30,3 +30,6 @@ samples, guidance on mobile development, and a full API reference.
 
 * the project uses codegenerator `build_runner`
 * to generate class supporting code, use command: `dart run build_runner build --delete-conflicting-outputs`
+
+### troubleshooting notes
+* finding Flutter framework for ios target: `open $(flutter doctor -v | grep -oE "(/[^ ]+/flutter)" | head -n 1)/bin/cache/artifacts/engine/ios`
