@@ -4,7 +4,6 @@
 //
 //  Created by Igor Zinin on 12.1.2025.
 //
-
 import Foundation
 
 class PlayerExceptionEventHandler: NSObject, FlutterStreamHandler {

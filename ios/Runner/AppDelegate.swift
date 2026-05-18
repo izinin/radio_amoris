@@ -4,9 +4,11 @@ import AVFoundation
 import MediaPlayer
 
 enum ChannelName {
-  static let audio = "com.zindolla.radioamoris/audio"
-  static let stream_player_state = "com.zindolla.radioamoris/player-state"
-  static let stream_playlist_ctl = "com.zindolla.radioamoris/playlist-ctrl"
+    static let audio = "com.zindolla.radioamoris/audio"
+    static let stream_player_state = "com.zindolla.radioamoris/player-state"
+    static let stream_playlist_ctl = "com.zindolla.radioamoris/playlist-ctrl"
+    static let stream_currently_playing = "com.zindolla.radioamoris/currently-playing"
+    static let stream_palyer_exception = "com.zindolla.radioamoris/player-exception"
 }
 
 enum MyPlayerCommand: Int {

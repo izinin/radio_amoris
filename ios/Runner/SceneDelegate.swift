@@ -65,8 +65,14 @@ class SceneDelegate: FlutterSceneDelegate {
             name: ChannelName.stream_playlist_ctl, binaryMessenger: controller.binaryMessenger)
         let eventChPlayerState = FlutterEventChannel(
             name: ChannelName.stream_player_state, binaryMessenger: controller.binaryMessenger)
+        let eventChCurrentlyPlaying = FlutterEventChannel(
+            name: ChannelName.stream_currently_playing, binaryMessenger: controller.binaryMessenger)
+        let eventPlayerException = FlutterEventChannel(
+            name: ChannelName.stream_palyer_exception, binaryMessenger: controller.binaryMessenger)
 
         eventChPlaylistCtrl.setStreamHandler(AppStateManager.shared.playlistStateEventHandler)
         eventChPlayerState.setStreamHandler(AppStateManager.shared.playerStateEventHandler)
+        eventChCurrentlyPlaying.setStreamHandler(AppStateManager.shared.playerCurrPlayingEventHandler)
+        eventPlayerException.setStreamHandler(AppStateManager.shared.playerExceptionEventHandler)
     }
 }
