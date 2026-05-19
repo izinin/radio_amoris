@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:radioamoris/appdata.dart';
 import 'package:radioamoris/features/stations/index.dart';
+import 'package:radioamoris/shared/model/audio_player.dart';
 import '../../shared/model/mem_station.dart';
 import '../../shared/model/audio_player_ctl_btn.dart';
 
@@ -11,7 +12,7 @@ class StationsScreen extends StatefulWidget {
   const StationsScreen({
     required StationsBloc stationsBloc,
     super.key,
-  })  : _stationsBloc = stationsBloc;
+  }) : _stationsBloc = stationsBloc;
 
   final StationsBloc _stationsBloc;
 
@@ -24,8 +25,10 @@ class StationsScreen extends StatefulWidget {
 class StationsScreenState extends State<StationsScreen> {
   PlayerSingleton? _playerCtl;
   StationsScreenState();
-  static const _playerStateStream = EventChannel('com.zindolla.radioamoris/player-state');
-  static const _playlistCtrlStream = EventChannel('com.zindolla.radioamoris/playlist-ctrl');
+  static const _playerStateStream =
+      EventChannel('com.zindolla.radioamoris/player-state');
+  static const _playlistCtrlStream =
+      EventChannel('com.zindolla.radioamoris/playlist-ctrl');
 
   @override
   void initState() {
@@ -36,8 +39,12 @@ class StationsScreenState extends State<StationsScreen> {
 
   Future<void> _setupPlatformChannel() async {
     final playerCtl = await GetIt.I.getAsync<PlayerSingleton>();
-    _playerStateStream.receiveBroadcastStream().listen(playerCtl.listenPlayerStateStream);
-    _playlistCtrlStream.receiveBroadcastStream().listen(playerCtl.listenPlaylistCtrlStream);
+    _playerStateStream
+        .receiveBroadcastStream()
+        .listen(playerCtl.listenPlayerStateStream);
+    _playlistCtrlStream
+        .receiveBroadcastStream()
+        .listen(playerCtl.listenPlaylistCtrlStream);
   }
 
   @override
@@ -71,7 +78,9 @@ class StationsScreenState extends State<StationsScreen> {
               child: Text('audio player is being initialized'),
             );
           }
-          if (currentState is LoadStationsState || currentState is PlayingStationState || currentState is ErrorPlayerState) {
+          if (currentState is LoadStationsState ||
+              currentState is PlayingStationState ||
+              currentState is ErrorPlayerState) {
             return Column(
               children: [
                 Expanded(
@@ -101,16 +110,15 @@ class StationsScreenState extends State<StationsScreen> {
     MemStation? station = widget._stationsBloc.repo.data?.elementAt(idx);
     return ListTile(
       title: Text(station?.name ?? "no name"),
-      subtitle:
-      station != null
+      subtitle: station != null
           ? ValueListenableBuilder<StationMetadata>(
-        valueListenable: station.metadata,
-        builder: (context, value, child) {
-          return Text('${value.songtitle}, listeners: ${value.uniquelisteners}');
-        },
-      )
+              valueListenable: station.metadata,
+              builder: (context, value, child) {
+                return Text(
+                    '${value.songtitle}, listeners: ${value.uniquelisteners}');
+              },
+            )
           : const Text('no name'),
-
       onTap: () {
         if (station == null) {
           return;
@@ -131,7 +139,9 @@ class StationsScreenState extends State<StationsScreen> {
     }
     return ValueListenableBuilder<MemStation?>(
         builder: (context, value, child) {
-          return (station.id == value?.id && _playerCtl != null) ? AudioPlayerCtlBtn(_playerCtl!, 32.0) : const SizedBox(width: 50, height: 50);
+          return (station.id == value?.id && _playerCtl != null)
+              ? AudioPlayerCtlBtn(_playerCtl!, 32.0)
+              : const SizedBox(width: 50, height: 50);
         },
         valueListenable: AppData.currentTune);
   }

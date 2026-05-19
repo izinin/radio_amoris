@@ -4,42 +4,37 @@ import AVFoundation
 import MediaPlayer
 
 enum ChannelName {
-  static let audio = "com.zindolla.radioamoris/audio"
-  static let stream_player_state = "com.zindolla.radioamoris/player-state"
-  static let stream_playlist_ctl = "com.zindolla.radioamoris/playlist-ctrl"
+    static let audio = "com.zindolla.radioamoris/audio"
+    static let stream_player_state = "com.zindolla.radioamoris/player-state"
+    static let stream_playlist_ctl = "com.zindolla.radioamoris/playlist-ctrl"
+    static let stream_currently_playing = "com.zindolla.radioamoris/currently-playing"
+    static let stream_palyer_exception = "com.zindolla.radioamoris/player-exception"
 }
 
-enum MyPlayerCommand : Int {
+enum MyPlayerCommand: Int {
     case IDLE = 0
     case PLAY
     case PAUSE
 }
 
-@UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate, FlutterStreamHandler {
-    // https://github.com/jorgenhenrichsen/SwiftAudio
-    var player: AudioPlayer = AudioPlayer()
-    var audioItem: AudioItem!
-    var audioCtlChannel: FlutterMethodChannel!
-    var action: String!
-    
-    var id: Int!
-    var url: String!
-    var name: String!
-    var assetLogo: String!
-    var logo: String!
+enum MyradioProcessingState: Int {
+    case idle = 1  //  ExoPlayer.STATE_IDLE
+    case buffering = 2  //  ExoPlayer.STATE_BUFFERING
+    case ready = 3  //  ExoPlayer.STATE_READY
+    case ended = 4  //  ExoPlayer.STATE_ENDED
+}
 
-    var currCmd: MyPlayerCommand = MyPlayerCommand.IDLE
-    var playlistCtrlEvent: FlutterEventSink?
-    var playerStateEventHandler = PlayerStateStreamHandler()
-
-    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        playlistCtrlEvent = events
+@main
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate, FlutterStreamHandler {
+    func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+        -> FlutterError?
+    {
+        AppStateManager.shared.playlistCtrlEvent = events
         return nil
     }
 
     func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        playlistCtrlEvent =  nil
+        AppStateManager.shared.playlistCtrlEvent = nil
         return nil
     }
 
@@ -47,129 +42,138 @@ enum MyPlayerCommand : Int {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        GeneratedPluginRegistrant.register(with: self)
-        self.player.event.stateChange.addListener(self, self.handleAudioPlayerStateChange)
-        
-        do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: AVAudioSession.Mode.default, options: [.defaultToSpeaker, .allowAirPlay, .allowBluetooth])
-            print("Playback OK")
-            try AVAudioSession.sharedInstance().setActive(true)
-            print("Session is Active")
-        } catch {
-            print(error)
-        }
-        player.remoteCommands=[.play, .pause, .next, .previous]
-        player.remoteCommandController.handleNextTrackCommand = { (event) in
-            self.playTrack(next: true)
-            return .success
-        }
-        player.remoteCommandController.handlePreviousTrackCommand = { (event) in
-            self.playTrack(next: false)
-            return .success
-        }
-        
-        let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-        self.audioCtlChannel = FlutterMethodChannel(name: ChannelName.audio,
-                                                   binaryMessenger: controller.binaryMessenger)
-        audioCtlChannel.setMethodCallHandler({
-            [weak self] (call: FlutterMethodCall, result: FlutterResult) -> Void in
-            // Note: this method is invoked on the UI thread.
-            self?.action = call.method
-            switch self?.action{
-            case "exoPlayerStart":
-                self?.player.stop()
-                guard let args = call.arguments else {
-                    return
-                }
-                if let myArgs = args as? [String: Any] {
-                    self?.id = myArgs["id"] as? Int
-                    self?.url = myArgs["url"] as? String
-                    self?.name = myArgs["name"] as? String
-                    self?.assetLogo = myArgs["assetLogo"] as? String
-                    self?.logo = myArgs["logo"] as? String
-                    self?.playSelecton()
-                    self!.currCmd = MyPlayerCommand.PLAY
-                } else {
-                    self!.currCmd = MyPlayerCommand.IDLE
-                    result("iOS could not extract flutter arguments in method: (sendParams)")
-                }                
-                break
-            case "exoPlayerPause":
-                self!.currCmd = MyPlayerCommand.PAUSE
-                self?.player.pause()
-                break
-            case "exoPlayerResume":
-                self!.currCmd = MyPlayerCommand.PLAY
-                self?.player.play()
-                break
-            case "destroy":
-                self!.currCmd = MyPlayerCommand.IDLE
-                self?.player.stop()
-                result("audio.onDestroy")
-                break
-            default:
-                result(FlutterMethodNotImplemented)
-                return
-            }
-            result(0)
-        })
-        let eventChPlaylistCtrl = FlutterEventChannel(name: ChannelName.stream_playlist_ctl, binaryMessenger: controller.binaryMessenger)
-        let eventChPlayerState = FlutterEventChannel(name: ChannelName.stream_player_state, binaryMessenger: controller.binaryMessenger)
-
-        eventChPlaylistCtrl.setStreamHandler(self)
-        eventChPlayerState.setStreamHandler(playerStateEventHandler)
-
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
-    
-    func handleAudioPlayerStateChange(state: AudioPlayerState) {
-        let flutterAState = (state == AudioPlayerState.playing || state == AudioPlayerState.paused) ? 3 : 1;
-        print("handleAudioPlayerStateChange: \(state)")
-        guard playerStateEventHandler.getPlayerStateEvent != nil else {
-            print("getPlayerStateEvent is nil")
-            return
+
+    func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+        GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+        // see example: https://developer.apple.com/documentation/mediaplayer/becoming-a-now-playable-app
+        let registeredCommands: [NowPlayableCommand] = [
+            .togglePausePlay,
+            .nextTrack,
+            .previousTrack,
+        ]
+        // Configure the app for Now Playing Info and Remote Command Center behaviors.
+        try? AppStateManager.shared.nowPlayableBehavior.handleNowPlayableConfiguration(
+            commands: registeredCommands,
+            disabledCommands: [
+                .play,
+                .pause,
+                .stop,
+                .skipBackward,
+                .skipForward,
+                .changePlaybackPosition,
+                .changePlaybackRate,
+                .enableLanguageOption,
+                .disableLanguageOption,
+            ],
+            commandHandler: handleCommand(command:event:),
+            interruptionHandler: handleInterrupt(with:))
+        observePlayingState()
+        Task {
+            await observeRateChanges()
         }
-        playerStateEventHandler.getPlayerStateEvent!(["state": flutterAState, "command": currCmd.rawValue])
+
     }
-    
-    func playSelecton(){
-        audioItem = DefaultAudioItem(audioUrl: self.url,
-                                     artist: "Radio Anima Amoris",
-                                     title: name,
-                                     sourceType: .stream,
-                                     artwork: UIImage(named: "LockedScr"))
-        do {
-            try player.load(item: audioItem, playWhenReady: true)
-            player.nowPlayingInfoController.set(keyValue: NowPlayingInfoProperty.isLiveStream(true))
-        } catch {
-            print("The stream could not be loaded")
+
+    private func observePlayingState() {
+        AppStateManager.shared.player.publisher(for: \.timeControlStatus)
+            .receive(on: DispatchQueue.main)
+            .sink { status in
+                AppStateManager.shared.playerStateEventHandler.mapPlayerStatus(status)
+            }
+            .store(in: &AppStateManager.shared.playerStateEventHandler.subscriptions)
+    }
+
+    // Observe changes to the playback rate asynchronously.
+    private func observeRateChanges() async {
+        let name = AVPlayer.rateDidChangeNotification
+        for await notification in NotificationCenter.default.notifications(named: name) {
+            guard
+                let reason = notification.userInfo?[AVPlayer.rateDidChangeReasonKey]
+                    as? AVPlayer.RateDidChangeReason
+            else {
+                continue
+            }
+            switch reason {
+            case .appBackgrounded:
+                NSLog("%@", "The app transitioned to the background.")
+            case .audioSessionInterrupted:
+                NSLog("%@", "The system interrupts the app’s audio session.")
+            case .setRateCalled:
+                NSLog("%@", "The app set the player’s rate.")
+            case .setRateFailed:
+                NSLog("%@", "An attempt to change the player’s rate failed.")
+            default:
+                break
+            }
         }
     }
-    
-    func playTrack(next: Bool){
-        self.currCmd = MyPlayerCommand.PLAY
-        playlistCtrlEvent!(next)
+
+    // MARK: Remote Commands
+    // Handle a command registered with the Remote Command Center.
+    private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent)
+        -> MPRemoteCommandHandlerStatus
+    {
+        print(command)
+
+        switch command {
+        case .stop:
+            AppStateManager.shared.player.pause()
+
+        case .togglePausePlay:
+            AppStateManager.shared.playerStateEventHandler.togglePausePlay()
+
+        case .pause:
+            AppStateManager.shared.player.pause()
+        case .play:
+            AppStateManager.shared.player.play()
+
+        case .nextTrack:
+            AppStateManager.shared.playlistStateEventHandler.sendNextTrack(isForward: true)
+
+        case .previousTrack:
+            AppStateManager.shared.playlistStateEventHandler.sendNextTrack(isForward: true)
+
+        default:
+            break
+        }
+
+        return .success
+    }
+
+    // MARK: Interruptions
+
+    // Handle a session interruption.
+
+    private func handleInterrupt(with interruption: NowPlayableInterruption) {
+
+        switch interruption {
+
+        case .began:
+            print("isInterrupted = true")
+
+        case .ended(let _shouldPlay):
+            print("isInterrupted = false")
+
+        /* TODO: restoreme
+            switch playerState {
+        
+            case .stopped:
+                break
+        
+            case .playing where shouldPlay:
+                player.play()
+        
+            case .playing:
+                playerState = .paused
+        
+            case .paused:
+                break
+            }
+             */
+        case .failed(let error):
+            print(error.localizedDescription)
+        }
     }
 }
-
-class PlayerStateStreamHandler: NSObject, FlutterStreamHandler {
-    var playerStateEvent: FlutterEventSink?
-    
-    // Read-only  property
-    var getPlayerStateEvent: FlutterEventSink? {
-        get {
-            return self.playerStateEvent
-        }
-    }
-
-    public func onListen(withArguments arguments: Any?, eventSink: @escaping FlutterEventSink) -> FlutterError? {
-        self.playerStateEvent = eventSink
-        return nil
-    }
-
-    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        self.playerStateEvent =  nil
-        return nil
-    }
-}               
-

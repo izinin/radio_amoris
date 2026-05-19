@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:radioamoris/shared/model/audio_player.dart';
 
 import 'features/stations/stations_page.dart';
 import 'appdata.dart';
@@ -49,7 +50,8 @@ class _AppUIState extends State<AppUI> {
       themeMode: useLightMode ? ThemeMode.light : ThemeMode.dark,
       theme: themeData,
       home: LayoutBuilder(builder: (context, constraints) {
-        double ctrlPanelWidth = min(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+        double ctrlPanelWidth = min(MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height);
         return Scaffold(
             appBar: createAppBar(),
             body: Column(
@@ -69,7 +71,10 @@ class _AppUIState extends State<AppUI> {
   }
 
   ThemeData _updateThemes(int colorIndex, bool useLightMode) {
-    return ThemeData(colorSchemeSeed: colorOptions[colorSelected], useMaterial3: true, brightness: useLightMode ? Brightness.light : Brightness.dark);
+    return ThemeData(
+        colorSchemeSeed: colorOptions[colorSelected],
+        useMaterial3: true,
+        brightness: useLightMode ? Brightness.light : Brightness.dark);
   }
 
   PreferredSizeWidget createAppBar() {
@@ -77,11 +82,14 @@ class _AppUIState extends State<AppUI> {
       title: const Text(apptitle),
       actions: [
         ValueListenableBuilder<Box>(
-            valueListenable: Hive.box(PlayerSingleton.settingsBoxName).listenable(),
+            valueListenable:
+                Hive.box(PlayerSingleton.settingsBoxName).listenable(),
             builder: (context, box, widget) {
               useLightMode = box.get('useLightMode', defaultValue: true);
               return IconButton(
-                icon: useLightMode ? const Icon(Icons.dark_mode) : const Icon(Icons.wb_sunny),
+                icon: useLightMode
+                    ? const Icon(Icons.dark_mode)
+                    : const Icon(Icons.wb_sunny),
                 onPressed: () {
                   useLightMode = !useLightMode;
                   box.put('useLightMode', useLightMode);
@@ -94,7 +102,8 @@ class _AppUIState extends State<AppUI> {
             }),
         PopupMenuButton(
           icon: const Icon(Icons.more_vert),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           itemBuilder: (context) {
             return List.generate(colorOptions.length, (index) {
               return PopupMenuItem(
@@ -104,11 +113,15 @@ class _AppUIState extends State<AppUI> {
                       Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: Icon(
-                          index == colorSelected ? Icons.color_lens : Icons.color_lens_outlined,
+                          index == colorSelected
+                              ? Icons.color_lens
+                              : Icons.color_lens_outlined,
                           color: colorOptions[index],
                         ),
                       ),
-                      Padding(padding: const EdgeInsets.only(left: 20), child: Text(colorText[index]))
+                      Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text(colorText[index]))
                     ],
                   ));
             });
