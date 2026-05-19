@@ -5,9 +5,9 @@ description: radio Amoris.
 publish_to: 'none'
 
 # Android:
-# version: 0.1.9+25
+version: 0.1.8+25
 # iOS:
-version: 0.1.8+1
+# version: 0.1.8+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
