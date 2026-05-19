@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:radioamoris/shared/model/audio_player.dart';
 
 import '../../appdata.dart';
 
@@ -20,7 +21,8 @@ class AudioPlayerCtlBtn extends StatelessWidget {
               final playerState = snapshot.data;
               final processingState = playerState?.state;
               final playing = playerState?.command == MyradioCommand.play;
-              if (processingState == MyradioProcessingState.idle || processingState == MyradioProcessingState.buffering) {
+              if (processingState == MyradioProcessingState.idle ||
+                  processingState == MyradioProcessingState.buffering) {
                 return Container(
                   margin: const EdgeInsets.all(8.0),
                   width: _iconSize,

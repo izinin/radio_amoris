@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:get_it/get_it.dart';
 import 'package:radioamoris/features/stations/index.dart';
 import 'package:meta/meta.dart';
+import 'package:radioamoris/shared/model/audio_player.dart';
 
 import '../../appdata.dart';
 import '../../shared/model/mem_station.dart';
@@ -11,12 +12,14 @@ import '../../shared/model/mem_station.dart';
 @immutable
 abstract class StationsEvent {
   static PlayerSingleton? _playerCtl;
-  Stream<StationsState> applyAsync({StationsState currentState, StationsBloc bloc});
+  Stream<StationsState> applyAsync(
+      {StationsState currentState, StationsBloc bloc});
 }
 
 class InitAppDataEvent extends StationsEvent {
   @override
-  Stream<StationsState> applyAsync({StationsState? currentState, StationsBloc? bloc}) async* {
+  Stream<StationsState> applyAsync(
+      {StationsState? currentState, StationsBloc? bloc}) async* {
     StationsEvent._playerCtl = await GetIt.I.getAsync<PlayerSingleton>();
     yield InitAppDataState(StationsEvent._playerCtl!);
   }
@@ -26,7 +29,8 @@ class LoadStationsEvent extends StationsEvent {
   static const metadataRefreshDuration = 60;
   LoadStationsEvent();
   @override
-  Stream<StationsState> applyAsync({StationsState? currentState, StationsBloc? bloc}) async* {
+  Stream<StationsState> applyAsync(
+      {StationsState? currentState, StationsBloc? bloc}) async* {
     try {
       if (AppData.inMemoryStations.isEmpty) {
         await bloc?.repo.getRemoteData();
@@ -34,7 +38,8 @@ class LoadStationsEvent extends StationsEvent {
           await bloc?.repo.fillMetadata(el);
         }
         Timer(const Duration(seconds: metadataRefreshDuration), () {
-          Timer.periodic(const Duration(seconds: metadataRefreshDuration), (timer) async {
+          Timer.periodic(const Duration(seconds: metadataRefreshDuration),
+              (timer) async {
             for (var el in AppData.inMemoryStations) {
               await bloc?.repo.fillMetadata(el);
             }
@@ -43,7 +48,8 @@ class LoadStationsEvent extends StationsEvent {
       }
       yield const LoadStationsState();
     } catch (err, stackTrace) {
-      developer.log('$err', name: 'LoadStationsEvent', error: err, stackTrace: stackTrace);
+      developer.log('$err',
+          name: 'LoadStationsEvent', error: err, stackTrace: stackTrace);
       yield ErrorStationsState(err.toString());
     }
   }
@@ -54,7 +60,8 @@ class LoadTuneForStationEvent extends StationsEvent {
   LoadTuneForStationEvent(this._station);
 
   @override
-  Stream<StationsState> applyAsync({StationsState? currentState, StationsBloc? bloc}) async* {
+  Stream<StationsState> applyAsync(
+      {StationsState? currentState, StationsBloc? bloc}) async* {
     try {
       await StationsEvent._playerCtl!.exoPlayerStart(_station);
       yield PlayingStationState(_station);
